@@ -1,0 +1,9 @@
+Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles/app.elf.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles/create-objdump.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles/niosv-stack-report.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles/create-hex.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles/edit_cache.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles/rebuild_cache.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/bsp/CMakeFiles/hal2_bsp.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/bsp/CMakeFiles/edit_cache.dir
+Z:/FPGA/GoldenTop/soft/app/build/Default/bsp/CMakeFiles/rebuild_cache.dir
