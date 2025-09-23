@@ -178,6 +178,7 @@ target_sources("${BspLibraryName}"
         drivers/inc/altera_avalon_jtag_uart.h
         drivers/inc/altera_avalon_jtag_uart_fd.h
         drivers/inc/altera_avalon_jtag_uart_regs.h
+        drivers/inc/altera_avalon_pio_regs.h
         drivers/inc/altera_avalon_sysid_qsys.h
         drivers/inc/altera_avalon_sysid_qsys_regs.h
         system.h

@@ -2,12 +2,12 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal2</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>23 sept. 2025 09:27:27</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1758612447848</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>23 sept. 2025 10:53:26</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1758617606178</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>Z:\FPGA\GoldenTop\soft\bsp</BspGeneratedLocation>
         <BspSettingsFile>Z:\FPGA\GoldenTop\soft\bsp\settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\NIOS_RFS2.sopcinfo</SopcDesignFile>
-        <SystemFileHash>af92e29c3d5cef685ed42b1606f94bdbaaf1bc2451710f8befab27bc8786821</SystemFileHash>
+        <SystemFileHash>a2d2ec50be977940aa87a8f2414dea6312e99a853ec8e2e9bdedeb136d4b4da9</SystemFileHash>
         <JdiFile>default</JdiFile>
         <Cpu>intel_niosv_g_0</Cpu>
         <SchemaVersion>1.9</SchemaVersion>
@@ -618,14 +618,20 @@
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>led0</slaveDescriptor>
+                <addressRange>0x00030040 - 0x0003004F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>sysid_qsys_0</slaveDescriptor>
-                <addressRange>0x00030040 - 0x00030047</addressRange>
+                <addressRange>0x00030050 - 0x00030057</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x00030048 - 0x0003004F</addressRange>
+                <addressRange>0x00030058 - 0x0003005F</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>

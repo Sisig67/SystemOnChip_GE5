@@ -8,8 +8,9 @@ use IEEE.numeric_std.all;
 
 entity NIOS_RFS2 is
 	port (
-		clk_clk       : in std_logic := '0'; --   clk.clk
-		reset_reset_n : in std_logic := '0'  -- reset.reset_n
+		clk_clk         : in  std_logic                    := '0'; --      clk.clk
+		led_nios_export : out std_logic_vector(9 downto 0);        -- led_nios.export
+		reset_reset_n   : in  std_logic                    := '0'  --    reset.reset_n
 	);
 end entity NIOS_RFS2;
 
@@ -123,6 +124,19 @@ architecture rtl of NIOS_RFS2 is
 		);
 	end component altera_avalon_jtag_uart;
 
+	component NIOS_RFS2_led0 is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(1 downto 0)  := (others => 'X'); -- address
+			write_n    : in  std_logic                     := 'X';             -- write_n
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			chipselect : in  std_logic                     := 'X';             -- chipselect
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			out_port   : out std_logic_vector(9 downto 0)                      -- export
+		);
+	end component NIOS_RFS2_led0;
+
 	component NIOS_RFS2_ram_0 is
 		port (
 			clk        : in  std_logic                     := 'X';             -- clk
@@ -226,6 +240,11 @@ architecture rtl of NIOS_RFS2 is
 			jtag_uart_0_avalon_jtag_slave_writedata           : out std_logic_vector(31 downto 0);                    -- writedata
 			jtag_uart_0_avalon_jtag_slave_waitrequest         : in  std_logic                     := 'X';             -- waitrequest
 			jtag_uart_0_avalon_jtag_slave_chipselect          : out std_logic;                                        -- chipselect
+			led0_s1_address                                   : out std_logic_vector(1 downto 0);                     -- address
+			led0_s1_write                                     : out std_logic;                                        -- write
+			led0_s1_readdata                                  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			led0_s1_writedata                                 : out std_logic_vector(31 downto 0);                    -- writedata
+			led0_s1_chipselect                                : out std_logic;                                        -- chipselect
 			ram_0_s1_address                                  : out std_logic_vector(14 downto 0);                    -- address
 			ram_0_s1_write                                    : out std_logic;                                        -- write
 			ram_0_s1_readdata                                 : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
@@ -388,6 +407,11 @@ architecture rtl of NIOS_RFS2 is
 	signal mm_interconnect_0_ram_0_s1_write                                : std_logic;                     -- mm_interconnect_0:ram_0_s1_write -> ram_0:write
 	signal mm_interconnect_0_ram_0_s1_writedata                            : std_logic_vector(31 downto 0); -- mm_interconnect_0:ram_0_s1_writedata -> ram_0:writedata
 	signal mm_interconnect_0_ram_0_s1_clken                                : std_logic;                     -- mm_interconnect_0:ram_0_s1_clken -> ram_0:clken
+	signal mm_interconnect_0_led0_s1_chipselect                            : std_logic;                     -- mm_interconnect_0:led0_s1_chipselect -> led0:chipselect
+	signal mm_interconnect_0_led0_s1_readdata                              : std_logic_vector(31 downto 0); -- led0:readdata -> mm_interconnect_0:led0_s1_readdata
+	signal mm_interconnect_0_led0_s1_address                               : std_logic_vector(1 downto 0);  -- mm_interconnect_0:led0_s1_address -> led0:address
+	signal mm_interconnect_0_led0_s1_write                                 : std_logic;                     -- mm_interconnect_0:led0_s1_write -> mm_interconnect_0_led0_s1_write:in
+	signal mm_interconnect_0_led0_s1_writedata                             : std_logic_vector(31 downto 0); -- mm_interconnect_0:led0_s1_writedata -> led0:writedata
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_readdata       : std_logic_vector(31 downto 0); -- intel_niosv_g_0:timer_sw_agent_readdata -> mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_readdata
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_waitrequest    : std_logic;                     -- intel_niosv_g_0:timer_sw_agent_waitrequest -> mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_waitrequest
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_address        : std_logic_vector(5 downto 0);  -- mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_address -> intel_niosv_g_0:timer_sw_agent_address
@@ -403,7 +427,8 @@ architecture rtl of NIOS_RFS2 is
 	signal reset_reset_n_ports_inv                                         : std_logic;                     -- reset_reset_n:inv -> rst_controller:reset_in0
 	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read:inv -> jtag_uart_0:av_read_n
 	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write:inv -> jtag_uart_0:av_write_n
-	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [jtag_uart_0:rst_n, sysid_qsys_0:reset_n]
+	signal mm_interconnect_0_led0_s1_write_ports_inv                       : std_logic;                     -- mm_interconnect_0_led0_s1_write:inv -> led0:write_n
+	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [jtag_uart_0:rst_n, led0:reset_n, sysid_qsys_0:reset_n]
 
 begin
 
@@ -514,6 +539,18 @@ begin
 			av_irq         => irq_mapper_receiver0_irq                                         --               irq.irq
 		);
 
+	led0 : component NIOS_RFS2_led0
+		port map (
+			clk        => clk_clk,                                   --                 clk.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv,  --               reset.reset_n
+			address    => mm_interconnect_0_led0_s1_address,         --                  s1.address
+			write_n    => mm_interconnect_0_led0_s1_write_ports_inv, --                    .write_n
+			writedata  => mm_interconnect_0_led0_s1_writedata,       --                    .writedata
+			chipselect => mm_interconnect_0_led0_s1_chipselect,      --                    .chipselect
+			readdata   => mm_interconnect_0_led0_s1_readdata,        --                    .readdata
+			out_port   => led_nios_export                            -- external_connection.export
+		);
+
 	ram_0 : component NIOS_RFS2_ram_0
 		port map (
 			clk        => clk_clk,                               --   clk1.clk
@@ -615,6 +652,11 @@ begin
 			jtag_uart_0_avalon_jtag_slave_writedata           => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_writedata,      --                                            .writedata
 			jtag_uart_0_avalon_jtag_slave_waitrequest         => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_waitrequest,    --                                            .waitrequest
 			jtag_uart_0_avalon_jtag_slave_chipselect          => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect,     --                                            .chipselect
+			led0_s1_address                                   => mm_interconnect_0_led0_s1_address,                              --                                     led0_s1.address
+			led0_s1_write                                     => mm_interconnect_0_led0_s1_write,                                --                                            .write
+			led0_s1_readdata                                  => mm_interconnect_0_led0_s1_readdata,                             --                                            .readdata
+			led0_s1_writedata                                 => mm_interconnect_0_led0_s1_writedata,                            --                                            .writedata
+			led0_s1_chipselect                                => mm_interconnect_0_led0_s1_chipselect,                           --                                            .chipselect
 			ram_0_s1_address                                  => mm_interconnect_0_ram_0_s1_address,                             --                                    ram_0_s1.address
 			ram_0_s1_write                                    => mm_interconnect_0_ram_0_s1_write,                               --                                            .write
 			ram_0_s1_readdata                                 => mm_interconnect_0_ram_0_s1_readdata,                            --                                            .readdata
@@ -704,6 +746,8 @@ begin
 	mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv <= not mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read;
 
 	mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv <= not mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write;
+
+	mm_interconnect_0_led0_s1_write_ports_inv <= not mm_interconnect_0_led0_s1_write;
 
 	rst_controller_reset_out_reset_ports_inv <= not rst_controller_reset_out_reset;
 

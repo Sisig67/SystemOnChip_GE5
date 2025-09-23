@@ -79,7 +79,8 @@ architecture struct of DE10_LITE_Golden_Top is
 	component NIOS_RFS2 is
 		port (
 			clk_clk       : in std_logic := 'X'; -- clk
-			reset_reset_n : in std_logic := 'X'  -- reset_n
+			reset_reset_n : in std_logic := 'X';  -- reset_n
+			led_nios_export : out std_logic_vector(9 downto 0)         -- export
 		);
 	end component NIOS_RFS2;
 
@@ -87,7 +88,7 @@ architecture struct of DE10_LITE_Golden_Top is
 		PORT
 			(
 				inclk0		: IN STD_LOGIC  := '0';
-				c0		: OUT STD_LOGIC 
+				c0		: OUT STD_LOGIC
 			);
 	end component;
 
@@ -98,7 +99,8 @@ begin
 	u0 : component NIOS_RFS2
 		port map (
 			clk_clk       => clk_75,       --   clk.clk
-			reset_reset_n => KEY(0)  -- reset.reset_n
+			reset_reset_n => KEY(0),  -- reset.reset_n
+			led_nios_export => LEDR  -- led_nios.export
 		);
 		
 	U1 : component pll2	

@@ -15,4 +15,22 @@ CMakeFiles/app.elf.dir/main.c.obj: Z:/FPGA/GoldenTop/soft/app/main.c \
  C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/_types.h \
  C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/machine/_types.h \
  C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/lock.h \
- C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/stdio.h
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/stdio.h \
+ Z:/FPGA/GoldenTop/soft/bsp/drivers/inc/altera_avalon_pio_regs.h \
+ Z:/FPGA/GoldenTop/soft/bsp/HAL/inc/io.h \
+ Z:/FPGA/GoldenTop/soft/bsp/HAL/inc/alt_types.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/unistd.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/unistd.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/types.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/_stdint.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/machine/endian.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/machine/_endian.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/select.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/_sigset.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/_timeval.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/timespec.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/_timespec.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/_pthreadtypes.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/sys/sched.h \
+ C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/riscv32-unknown-elf/include/machine/types.h \
+ Z:/FPGA/GoldenTop/soft/bsp/system.h Z:/FPGA/GoldenTop/soft/bsp/linker.h
