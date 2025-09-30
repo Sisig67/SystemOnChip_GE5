@@ -3,7 +3,7 @@
 # Machine generated for CPU 'intel_niosv_g_0' in SOPC Builder design 'NIOS_RFS2'
 # SOPC Builder design path: ../../NIOS_RFS2.sopcinfo
 #
-# Generated: Tue Sep 23 10:53:29 CEST 2025
+# Generated: Tue Sep 30 10:45:18 CEST 2025
 
 # DO NOT MODIFY THIS FILE
 #
@@ -46,5 +46,8 @@
 # The cache attribute is specified which improves GDB performance
 # by allowing GDB to cache memory contents on the host.
 
+# SDRAM
+memory 0x0 0x4000000 cache
+
 # ram_0
-memory 0x0 0x20000 cache
+memory 0x4000000 0x4020000 cache

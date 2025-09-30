@@ -22,10 +22,10 @@
 <td width="20%" bgcolor="#77BBFF">BSP Version:</td><td>default</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated On:</td><td>23 sept. 2025 10:53:26</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated On:</td><td>30 sept. 2025 10:45:14</td>
 </tr>
 <tr mode="wrap">
-<td width="20%" bgcolor="#77BBFF">BSP Generated Timestamp:</td><td>1758617606178</td>
+<td width="20%" bgcolor="#77BBFF">BSP Generated Timestamp:</td><td>1759221914673</td>
 </tr>
 <tr mode="wrap">
 <td width="20%" bgcolor="#77BBFF">BSP Generated Location:</td><td>Z:\FPGA\GoldenTop\soft\bsp</td>
@@ -38,22 +38,28 @@
 <th align="left" width="20%">Slave Descriptor</th><th align="left" width="40%">Address Range</th><th align="left" width="20%">Size</th><th align="left" width="20%">Attributes</th>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>jtag_uart_0</td><td>0x00030058 - 0x0003005F</td><td>8</td><td class="listing">printable</td>
+<td>jtag_uart_0</td><td>0x04030068 - 0x0403006F</td><td>8</td><td class="listing">printable</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>sysid_qsys_0</td><td>0x00030050 - 0x00030057</td><td>8</td><td class="listing">&nbsp;</td>
+<td>sysid_qsys_0</td><td>0x04030060 - 0x04030067</td><td>8</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>led0</td><td>0x00030040 - 0x0003004F</td><td>16</td><td class="listing">&nbsp;</td>
+<td>led0</td><td>0x04030050 - 0x0403005F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>intel_niosv_g_0_timer_sw_agent</td><td>0x00030000 - 0x0003003F</td><td>64</td><td class="listing">&nbsp;</td>
+<td>bt0</td><td>0x04030040 - 0x0403004F</td><td>16</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>intel_niosv_g_0_dm_agent</td><td>0x00020000 - 0x0002FFFF</td><td>65536</td><td class="listing">&nbsp;</td>
+<td>intel_niosv_g_0_timer_sw_agent</td><td>0x04030000 - 0x0403003F</td><td>64</td><td class="listing">&nbsp;</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>ram_0</td><td>0x00000000 - 0x0001FFFF</td><td>131072</td><td class="listing">memory</td>
+<td>intel_niosv_g_0_dm_agent</td><td>0x04020000 - 0x0402FFFF</td><td>65536</td><td class="listing">&nbsp;</td>
+</tr>
+<tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
+<td>ram_0</td><td>0x04000000 - 0x0401FFFF</td><td>131072</td><td class="listing">memory</td>
+</tr>
+<tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
+<td>SDRAM</td><td>0x00000000 - 0x03FFFFFF</td><td>67108864</td><td class="listing">memory</td>
 </tr>
 </table>
 <br>
@@ -72,25 +78,25 @@
 <th align="left" width="50%">Section</th><th align="left" width="50%">Region</th>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.text</td><td>ram_0</td>
+<td>.text</td><td>SDRAM</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.exceptions</td><td>ram_0</td>
+<td>.exceptions</td><td>SDRAM</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.rodata</td><td>ram_0</td>
+<td>.rodata</td><td>SDRAM</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.rwdata</td><td>ram_0</td>
+<td>.rwdata</td><td>SDRAM</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.bss</td><td>ram_0</td>
+<td>.bss</td><td>SDRAM</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.heap</td><td>ram_0</td>
+<td>.heap</td><td>SDRAM</td>
 </tr>
 <tr mode="wrap" STYLE="display: 'block'; font-family: 'courier'; color: '#000000'; font-weight: '500'; font-size: '14'; margin-top: '10pt'; text-align: 'left'">
-<td>.stack</td><td>ram_0</td>
+<td>.stack</td><td>SDRAM</td>
 </tr>
 </table>
 <h3>Settings</h3>
@@ -564,7 +570,7 @@
 <td width="20%">Default Value:</td><td>none</td>
 </tr>
 <tr>
-<td width="20%">Value:</td><td>ram_0</td>
+<td width="20%">Value:</td><td>SDRAM</td>
 </tr>
 <tr>
 <td width="20%">Type:</td><td>UnquotedString</td>

@@ -8,13 +8,64 @@ use IEEE.numeric_std.all;
 
 entity NIOS_RFS2 is
 	port (
-		clk_clk         : in  std_logic                    := '0'; --      clk.clk
-		led_nios_export : out std_logic_vector(9 downto 0);        -- led_nios.export
-		reset_reset_n   : in  std_logic                    := '0'  --    reset.reset_n
+		bt0_export                        : in    std_logic                     := '0';             --                       bt0.export
+		clk_100_in_clk_clk                : in    std_logic                     := '0';             --            clk_100_in_clk.clk
+		clk_50_in_clk_clk                 : in    std_logic                     := '0';             --             clk_50_in_clk.clk
+		led_nios_export                   : out   std_logic_vector(9 downto 0);                     --                  led_nios.export
+		reset_bridge_100_in_reset_reset_n : in    std_logic                     := '0';             -- reset_bridge_100_in_reset.reset_n
+		reset_bridge_50_in_reset_reset_n  : in    std_logic                     := '0';             --  reset_bridge_50_in_reset.reset_n
+		sdram_addr                        : out   std_logic_vector(12 downto 0);                    --                     sdram.addr
+		sdram_ba                          : out   std_logic_vector(1 downto 0);                     --                          .ba
+		sdram_cas_n                       : out   std_logic;                                        --                          .cas_n
+		sdram_cke                         : out   std_logic;                                        --                          .cke
+		sdram_cs_n                        : out   std_logic;                                        --                          .cs_n
+		sdram_dq                          : inout std_logic_vector(15 downto 0) := (others => '0'); --                          .dq
+		sdram_dqm                         : out   std_logic_vector(1 downto 0);                     --                          .dqm
+		sdram_ras_n                       : out   std_logic;                                        --                          .ras_n
+		sdram_we_n                        : out   std_logic                                         --                          .we_n
 	);
 end entity NIOS_RFS2;
 
 architecture rtl of NIOS_RFS2 is
+	component NIOS_RFS2_SDRAM is
+		port (
+			clk            : in    std_logic                     := 'X';             -- clk
+			reset_n        : in    std_logic                     := 'X';             -- reset_n
+			az_addr        : in    std_logic_vector(24 downto 0) := (others => 'X'); -- address
+			az_be_n        : in    std_logic_vector(1 downto 0)  := (others => 'X'); -- byteenable_n
+			az_cs          : in    std_logic                     := 'X';             -- chipselect
+			az_data        : in    std_logic_vector(15 downto 0) := (others => 'X'); -- writedata
+			az_rd_n        : in    std_logic                     := 'X';             -- read_n
+			az_wr_n        : in    std_logic                     := 'X';             -- write_n
+			za_data        : out   std_logic_vector(15 downto 0);                    -- readdata
+			za_valid       : out   std_logic;                                        -- readdatavalid
+			za_waitrequest : out   std_logic;                                        -- waitrequest
+			zs_addr        : out   std_logic_vector(12 downto 0);                    -- export
+			zs_ba          : out   std_logic_vector(1 downto 0);                     -- export
+			zs_cas_n       : out   std_logic;                                        -- export
+			zs_cke         : out   std_logic;                                        -- export
+			zs_cs_n        : out   std_logic;                                        -- export
+			zs_dq          : inout std_logic_vector(15 downto 0) := (others => 'X'); -- export
+			zs_dqm         : out   std_logic_vector(1 downto 0);                     -- export
+			zs_ras_n       : out   std_logic;                                        -- export
+			zs_we_n        : out   std_logic                                         -- export
+		);
+	end component NIOS_RFS2_SDRAM;
+
+	component NIOS_RFS2_bt0 is
+		port (
+			clk        : in  std_logic                     := 'X';             -- clk
+			reset_n    : in  std_logic                     := 'X';             -- reset_n
+			address    : in  std_logic_vector(1 downto 0)  := (others => 'X'); -- address
+			write_n    : in  std_logic                     := 'X';             -- write_n
+			writedata  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			chipselect : in  std_logic                     := 'X';             -- chipselect
+			readdata   : out std_logic_vector(31 downto 0);                    -- readdata
+			in_port    : in  std_logic                     := 'X';             -- export
+			irq        : out std_logic                                         -- irq
+		);
+	end component NIOS_RFS2_bt0;
+
 	component NIOS_RFS2_intel_niosv_g_0 is
 		port (
 			clk                          : in  std_logic                     := 'X';             -- clk
@@ -137,6 +188,82 @@ architecture rtl of NIOS_RFS2 is
 		);
 	end component NIOS_RFS2_led0;
 
+	component altera_avalon_mm_bridge is
+		generic (
+			DATA_WIDTH        : integer := 32;
+			SYMBOL_WIDTH      : integer := 8;
+			HDL_ADDR_WIDTH    : integer := 10;
+			BURSTCOUNT_WIDTH  : integer := 1;
+			PIPELINE_COMMAND  : integer := 1;
+			PIPELINE_RESPONSE : integer := 1
+		);
+		port (
+			clk              : in  std_logic                     := 'X';             -- clk
+			reset            : in  std_logic                     := 'X';             -- reset
+			s0_waitrequest   : out std_logic;                                        -- waitrequest
+			s0_readdata      : out std_logic_vector(31 downto 0);                    -- readdata
+			s0_readdatavalid : out std_logic;                                        -- readdatavalid
+			s0_burstcount    : in  std_logic_vector(0 downto 0)  := (others => 'X'); -- burstcount
+			s0_writedata     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			s0_address       : in  std_logic_vector(25 downto 0) := (others => 'X'); -- address
+			s0_write         : in  std_logic                     := 'X';             -- write
+			s0_read          : in  std_logic                     := 'X';             -- read
+			s0_byteenable    : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			s0_debugaccess   : in  std_logic                     := 'X';             -- debugaccess
+			m0_waitrequest   : in  std_logic                     := 'X';             -- waitrequest
+			m0_readdata      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			m0_readdatavalid : in  std_logic                     := 'X';             -- readdatavalid
+			m0_burstcount    : out std_logic_vector(0 downto 0);                     -- burstcount
+			m0_writedata     : out std_logic_vector(31 downto 0);                    -- writedata
+			m0_address       : out std_logic_vector(25 downto 0);                    -- address
+			m0_write         : out std_logic;                                        -- write
+			m0_read          : out std_logic;                                        -- read
+			m0_byteenable    : out std_logic_vector(3 downto 0);                     -- byteenable
+			m0_debugaccess   : out std_logic;                                        -- debugaccess
+			s0_response      : out std_logic_vector(1 downto 0);                     -- response
+			m0_response      : in  std_logic_vector(1 downto 0)  := (others => 'X')  -- response
+		);
+	end component altera_avalon_mm_bridge;
+
+	component altera_avalon_mm_clock_crossing_bridge is
+		generic (
+			DATA_WIDTH          : integer := 32;
+			SYMBOL_WIDTH        : integer := 8;
+			HDL_ADDR_WIDTH      : integer := 10;
+			BURSTCOUNT_WIDTH    : integer := 1;
+			COMMAND_FIFO_DEPTH  : integer := 4;
+			RESPONSE_FIFO_DEPTH : integer := 4;
+			MASTER_SYNC_DEPTH   : integer := 2;
+			SLAVE_SYNC_DEPTH    : integer := 2
+		);
+		port (
+			m0_clk           : in  std_logic                     := 'X';             -- clk
+			m0_reset         : in  std_logic                     := 'X';             -- reset
+			s0_clk           : in  std_logic                     := 'X';             -- clk
+			s0_reset         : in  std_logic                     := 'X';             -- reset
+			s0_waitrequest   : out std_logic;                                        -- waitrequest
+			s0_readdata      : out std_logic_vector(31 downto 0);                    -- readdata
+			s0_readdatavalid : out std_logic;                                        -- readdatavalid
+			s0_burstcount    : in  std_logic_vector(0 downto 0)  := (others => 'X'); -- burstcount
+			s0_writedata     : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			s0_address       : in  std_logic_vector(25 downto 0) := (others => 'X'); -- address
+			s0_write         : in  std_logic                     := 'X';             -- write
+			s0_read          : in  std_logic                     := 'X';             -- read
+			s0_byteenable    : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			s0_debugaccess   : in  std_logic                     := 'X';             -- debugaccess
+			m0_waitrequest   : in  std_logic                     := 'X';             -- waitrequest
+			m0_readdata      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			m0_readdatavalid : in  std_logic                     := 'X';             -- readdatavalid
+			m0_burstcount    : out std_logic_vector(0 downto 0);                     -- burstcount
+			m0_writedata     : out std_logic_vector(31 downto 0);                    -- writedata
+			m0_address       : out std_logic_vector(25 downto 0);                    -- address
+			m0_write         : out std_logic;                                        -- write
+			m0_read          : out std_logic;                                        -- read
+			m0_byteenable    : out std_logic_vector(3 downto 0);                     -- byteenable
+			m0_debugaccess   : out std_logic                                         -- debugaccess
+		);
+	end component altera_avalon_mm_clock_crossing_bridge;
+
 	component NIOS_RFS2_ram_0 is
 		port (
 			clk        : in  std_logic                     := 'X';             -- clk
@@ -216,8 +343,14 @@ architecture rtl of NIOS_RFS2 is
 			intel_niosv_g_0_instruction_manager_rlast         : out std_logic;                                        -- rlast
 			intel_niosv_g_0_instruction_manager_rvalid        : out std_logic;                                        -- rvalid
 			intel_niosv_g_0_instruction_manager_rready        : in  std_logic                     := 'X';             -- rready
-			clk_75_clk_clk                                    : in  std_logic                     := 'X';             -- clk
+			clk_50_out_clk_clk                                : in  std_logic                     := 'X';             -- clk
 			intel_niosv_g_0_reset_reset_bridge_in_reset_reset : in  std_logic                     := 'X';             -- reset
+			jtag_uart_0_reset_reset_bridge_in_reset_reset     : in  std_logic                     := 'X';             -- reset
+			bt0_s1_address                                    : out std_logic_vector(1 downto 0);                     -- address
+			bt0_s1_write                                      : out std_logic;                                        -- write
+			bt0_s1_readdata                                   : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			bt0_s1_writedata                                  : out std_logic_vector(31 downto 0);                    -- writedata
+			bt0_s1_chipselect                                 : out std_logic;                                        -- chipselect
 			intel_niosv_g_0_dm_agent_address                  : out std_logic_vector(15 downto 0);                    -- address
 			intel_niosv_g_0_dm_agent_write                    : out std_logic;                                        -- write
 			intel_niosv_g_0_dm_agent_read                     : out std_logic;                                        -- read
@@ -245,6 +378,16 @@ architecture rtl of NIOS_RFS2 is
 			led0_s1_readdata                                  : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
 			led0_s1_writedata                                 : out std_logic_vector(31 downto 0);                    -- writedata
 			led0_s1_chipselect                                : out std_logic;                                        -- chipselect
+			mm_clock_crossing_bridge_0_s0_address             : out std_logic_vector(25 downto 0);                    -- address
+			mm_clock_crossing_bridge_0_s0_write               : out std_logic;                                        -- write
+			mm_clock_crossing_bridge_0_s0_read                : out std_logic;                                        -- read
+			mm_clock_crossing_bridge_0_s0_readdata            : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
+			mm_clock_crossing_bridge_0_s0_writedata           : out std_logic_vector(31 downto 0);                    -- writedata
+			mm_clock_crossing_bridge_0_s0_burstcount          : out std_logic_vector(0 downto 0);                     -- burstcount
+			mm_clock_crossing_bridge_0_s0_byteenable          : out std_logic_vector(3 downto 0);                     -- byteenable
+			mm_clock_crossing_bridge_0_s0_readdatavalid       : in  std_logic                     := 'X';             -- readdatavalid
+			mm_clock_crossing_bridge_0_s0_waitrequest         : in  std_logic                     := 'X';             -- waitrequest
+			mm_clock_crossing_bridge_0_s0_debugaccess         : out std_logic;                                        -- debugaccess
 			ram_0_s1_address                                  : out std_logic_vector(14 downto 0);                    -- address
 			ram_0_s1_write                                    : out std_logic;                                        -- write
 			ram_0_s1_readdata                                 : in  std_logic_vector(31 downto 0) := (others => 'X'); -- readdata
@@ -257,16 +400,43 @@ architecture rtl of NIOS_RFS2 is
 		);
 	end component NIOS_RFS2_mm_interconnect_0;
 
+	component NIOS_RFS2_mm_interconnect_2 is
+		port (
+			clk_100_out_clk_clk                           : in  std_logic                     := 'X';             -- clk
+			mm_bridge_0_reset_reset_bridge_in_reset_reset : in  std_logic                     := 'X';             -- reset
+			mm_bridge_0_m0_address                        : in  std_logic_vector(25 downto 0) := (others => 'X'); -- address
+			mm_bridge_0_m0_waitrequest                    : out std_logic;                                        -- waitrequest
+			mm_bridge_0_m0_burstcount                     : in  std_logic_vector(0 downto 0)  := (others => 'X'); -- burstcount
+			mm_bridge_0_m0_byteenable                     : in  std_logic_vector(3 downto 0)  := (others => 'X'); -- byteenable
+			mm_bridge_0_m0_read                           : in  std_logic                     := 'X';             -- read
+			mm_bridge_0_m0_readdata                       : out std_logic_vector(31 downto 0);                    -- readdata
+			mm_bridge_0_m0_readdatavalid                  : out std_logic;                                        -- readdatavalid
+			mm_bridge_0_m0_write                          : in  std_logic                     := 'X';             -- write
+			mm_bridge_0_m0_writedata                      : in  std_logic_vector(31 downto 0) := (others => 'X'); -- writedata
+			mm_bridge_0_m0_debugaccess                    : in  std_logic                     := 'X';             -- debugaccess
+			SDRAM_s1_address                              : out std_logic_vector(24 downto 0);                    -- address
+			SDRAM_s1_write                                : out std_logic;                                        -- write
+			SDRAM_s1_read                                 : out std_logic;                                        -- read
+			SDRAM_s1_readdata                             : in  std_logic_vector(15 downto 0) := (others => 'X'); -- readdata
+			SDRAM_s1_writedata                            : out std_logic_vector(15 downto 0);                    -- writedata
+			SDRAM_s1_byteenable                           : out std_logic_vector(1 downto 0);                     -- byteenable
+			SDRAM_s1_readdatavalid                        : in  std_logic                     := 'X';             -- readdatavalid
+			SDRAM_s1_waitrequest                          : in  std_logic                     := 'X';             -- waitrequest
+			SDRAM_s1_chipselect                           : out std_logic                                         -- chipselect
+		);
+	end component NIOS_RFS2_mm_interconnect_2;
+
 	component NIOS_RFS2_irq_mapper is
 		port (
 			clk           : in  std_logic                     := 'X'; -- clk
 			reset         : in  std_logic                     := 'X'; -- reset
 			receiver0_irq : in  std_logic                     := 'X'; -- irq
+			receiver1_irq : in  std_logic                     := 'X'; -- irq
 			sender_irq    : out std_logic_vector(15 downto 0)         -- irq
 		);
 	end component NIOS_RFS2_irq_mapper;
 
-	component altera_reset_controller is
+	component nios_rfs2_rst_controller is
 		generic (
 			NUM_RESET_INPUTS          : integer := 6;
 			OUTPUT_RESET_SYNC_EDGES   : string  := "deassert";
@@ -294,44 +464,120 @@ architecture rtl of NIOS_RFS2 is
 			ADAPT_RESET_REQUEST       : integer := 0
 		);
 		port (
-			reset_in0      : in  std_logic := 'X'; -- reset
-			clk            : in  std_logic := 'X'; -- clk
-			reset_out      : out std_logic;        -- reset
-			reset_req      : out std_logic;        -- reset_req
-			reset_req_in0  : in  std_logic := 'X'; -- reset_req
-			reset_in1      : in  std_logic := 'X'; -- reset
-			reset_req_in1  : in  std_logic := 'X'; -- reset_req
-			reset_in2      : in  std_logic := 'X'; -- reset
-			reset_req_in2  : in  std_logic := 'X'; -- reset_req
-			reset_in3      : in  std_logic := 'X'; -- reset
-			reset_req_in3  : in  std_logic := 'X'; -- reset_req
-			reset_in4      : in  std_logic := 'X'; -- reset
-			reset_req_in4  : in  std_logic := 'X'; -- reset_req
-			reset_in5      : in  std_logic := 'X'; -- reset
-			reset_req_in5  : in  std_logic := 'X'; -- reset_req
-			reset_in6      : in  std_logic := 'X'; -- reset
-			reset_req_in6  : in  std_logic := 'X'; -- reset_req
-			reset_in7      : in  std_logic := 'X'; -- reset
-			reset_req_in7  : in  std_logic := 'X'; -- reset_req
-			reset_in8      : in  std_logic := 'X'; -- reset
-			reset_req_in8  : in  std_logic := 'X'; -- reset_req
-			reset_in9      : in  std_logic := 'X'; -- reset
-			reset_req_in9  : in  std_logic := 'X'; -- reset_req
-			reset_in10     : in  std_logic := 'X'; -- reset
-			reset_req_in10 : in  std_logic := 'X'; -- reset_req
-			reset_in11     : in  std_logic := 'X'; -- reset
-			reset_req_in11 : in  std_logic := 'X'; -- reset_req
-			reset_in12     : in  std_logic := 'X'; -- reset
-			reset_req_in12 : in  std_logic := 'X'; -- reset_req
-			reset_in13     : in  std_logic := 'X'; -- reset
-			reset_req_in13 : in  std_logic := 'X'; -- reset_req
-			reset_in14     : in  std_logic := 'X'; -- reset
-			reset_req_in14 : in  std_logic := 'X'; -- reset_req
-			reset_in15     : in  std_logic := 'X'; -- reset
-			reset_req_in15 : in  std_logic := 'X'  -- reset_req
+			reset_in0      : in  std_logic := 'X'; -- reset_in0.reset
+			clk            : in  std_logic := 'X'; --       clk.clk
+			reset_out      : out std_logic;        -- reset_out.reset
+			reset_req      : out std_logic;        --          .reset_req
+			reset_in1      : in  std_logic := 'X';
+			reset_in10     : in  std_logic := 'X';
+			reset_in11     : in  std_logic := 'X';
+			reset_in12     : in  std_logic := 'X';
+			reset_in13     : in  std_logic := 'X';
+			reset_in14     : in  std_logic := 'X';
+			reset_in15     : in  std_logic := 'X';
+			reset_in2      : in  std_logic := 'X';
+			reset_in3      : in  std_logic := 'X';
+			reset_in4      : in  std_logic := 'X';
+			reset_in5      : in  std_logic := 'X';
+			reset_in6      : in  std_logic := 'X';
+			reset_in7      : in  std_logic := 'X';
+			reset_in8      : in  std_logic := 'X';
+			reset_in9      : in  std_logic := 'X';
+			reset_req_in0  : in  std_logic := 'X';
+			reset_req_in1  : in  std_logic := 'X';
+			reset_req_in10 : in  std_logic := 'X';
+			reset_req_in11 : in  std_logic := 'X';
+			reset_req_in12 : in  std_logic := 'X';
+			reset_req_in13 : in  std_logic := 'X';
+			reset_req_in14 : in  std_logic := 'X';
+			reset_req_in15 : in  std_logic := 'X';
+			reset_req_in2  : in  std_logic := 'X';
+			reset_req_in3  : in  std_logic := 'X';
+			reset_req_in4  : in  std_logic := 'X';
+			reset_req_in5  : in  std_logic := 'X';
+			reset_req_in6  : in  std_logic := 'X';
+			reset_req_in7  : in  std_logic := 'X';
+			reset_req_in8  : in  std_logic := 'X';
+			reset_req_in9  : in  std_logic := 'X'
 		);
-	end component altera_reset_controller;
+	end component nios_rfs2_rst_controller;
 
+	component nios_rfs2_rst_controller_001 is
+		generic (
+			NUM_RESET_INPUTS          : integer := 6;
+			OUTPUT_RESET_SYNC_EDGES   : string  := "deassert";
+			SYNC_DEPTH                : integer := 2;
+			RESET_REQUEST_PRESENT     : integer := 0;
+			RESET_REQ_WAIT_TIME       : integer := 1;
+			MIN_RST_ASSERTION_TIME    : integer := 3;
+			RESET_REQ_EARLY_DSRT_TIME : integer := 1;
+			USE_RESET_REQUEST_IN0     : integer := 0;
+			USE_RESET_REQUEST_IN1     : integer := 0;
+			USE_RESET_REQUEST_IN2     : integer := 0;
+			USE_RESET_REQUEST_IN3     : integer := 0;
+			USE_RESET_REQUEST_IN4     : integer := 0;
+			USE_RESET_REQUEST_IN5     : integer := 0;
+			USE_RESET_REQUEST_IN6     : integer := 0;
+			USE_RESET_REQUEST_IN7     : integer := 0;
+			USE_RESET_REQUEST_IN8     : integer := 0;
+			USE_RESET_REQUEST_IN9     : integer := 0;
+			USE_RESET_REQUEST_IN10    : integer := 0;
+			USE_RESET_REQUEST_IN11    : integer := 0;
+			USE_RESET_REQUEST_IN12    : integer := 0;
+			USE_RESET_REQUEST_IN13    : integer := 0;
+			USE_RESET_REQUEST_IN14    : integer := 0;
+			USE_RESET_REQUEST_IN15    : integer := 0;
+			ADAPT_RESET_REQUEST       : integer := 0
+		);
+		port (
+			reset_in0      : in  std_logic := 'X'; -- reset_in0.reset
+			reset_in1      : in  std_logic := 'X'; -- reset_in1.reset
+			clk            : in  std_logic := 'X'; --       clk.clk
+			reset_out      : out std_logic;        -- reset_out.reset
+			reset_in10     : in  std_logic := 'X';
+			reset_in11     : in  std_logic := 'X';
+			reset_in12     : in  std_logic := 'X';
+			reset_in13     : in  std_logic := 'X';
+			reset_in14     : in  std_logic := 'X';
+			reset_in15     : in  std_logic := 'X';
+			reset_in2      : in  std_logic := 'X';
+			reset_in3      : in  std_logic := 'X';
+			reset_in4      : in  std_logic := 'X';
+			reset_in5      : in  std_logic := 'X';
+			reset_in6      : in  std_logic := 'X';
+			reset_in7      : in  std_logic := 'X';
+			reset_in8      : in  std_logic := 'X';
+			reset_in9      : in  std_logic := 'X';
+			reset_req      : out std_logic;
+			reset_req_in0  : in  std_logic := 'X';
+			reset_req_in1  : in  std_logic := 'X';
+			reset_req_in10 : in  std_logic := 'X';
+			reset_req_in11 : in  std_logic := 'X';
+			reset_req_in12 : in  std_logic := 'X';
+			reset_req_in13 : in  std_logic := 'X';
+			reset_req_in14 : in  std_logic := 'X';
+			reset_req_in15 : in  std_logic := 'X';
+			reset_req_in2  : in  std_logic := 'X';
+			reset_req_in3  : in  std_logic := 'X';
+			reset_req_in4  : in  std_logic := 'X';
+			reset_req_in5  : in  std_logic := 'X';
+			reset_req_in6  : in  std_logic := 'X';
+			reset_req_in7  : in  std_logic := 'X';
+			reset_req_in8  : in  std_logic := 'X';
+			reset_req_in9  : in  std_logic := 'X'
+		);
+	end component nios_rfs2_rst_controller_001;
+
+	signal mm_clock_crossing_bridge_0_m0_waitrequest                       : std_logic;                     -- mm_bridge_0:s0_waitrequest -> mm_clock_crossing_bridge_0:m0_waitrequest
+	signal mm_clock_crossing_bridge_0_m0_readdata                          : std_logic_vector(31 downto 0); -- mm_bridge_0:s0_readdata -> mm_clock_crossing_bridge_0:m0_readdata
+	signal mm_clock_crossing_bridge_0_m0_debugaccess                       : std_logic;                     -- mm_clock_crossing_bridge_0:m0_debugaccess -> mm_bridge_0:s0_debugaccess
+	signal mm_clock_crossing_bridge_0_m0_address                           : std_logic_vector(25 downto 0); -- mm_clock_crossing_bridge_0:m0_address -> mm_bridge_0:s0_address
+	signal mm_clock_crossing_bridge_0_m0_read                              : std_logic;                     -- mm_clock_crossing_bridge_0:m0_read -> mm_bridge_0:s0_read
+	signal mm_clock_crossing_bridge_0_m0_byteenable                        : std_logic_vector(3 downto 0);  -- mm_clock_crossing_bridge_0:m0_byteenable -> mm_bridge_0:s0_byteenable
+	signal mm_clock_crossing_bridge_0_m0_readdatavalid                     : std_logic;                     -- mm_bridge_0:s0_readdatavalid -> mm_clock_crossing_bridge_0:m0_readdatavalid
+	signal mm_clock_crossing_bridge_0_m0_writedata                         : std_logic_vector(31 downto 0); -- mm_clock_crossing_bridge_0:m0_writedata -> mm_bridge_0:s0_writedata
+	signal mm_clock_crossing_bridge_0_m0_write                             : std_logic;                     -- mm_clock_crossing_bridge_0:m0_write -> mm_bridge_0:s0_write
+	signal mm_clock_crossing_bridge_0_m0_burstcount                        : std_logic_vector(0 downto 0);  -- mm_clock_crossing_bridge_0:m0_burstcount -> mm_bridge_0:s0_burstcount
 	signal intel_niosv_g_0_data_manager_arlen                              : std_logic_vector(7 downto 0);  -- intel_niosv_g_0:data_manager_arlen -> mm_interconnect_0:intel_niosv_g_0_data_manager_arlen
 	signal intel_niosv_g_0_data_manager_wstrb                              : std_logic_vector(3 downto 0);  -- intel_niosv_g_0:data_manager_wstrb -> mm_interconnect_0:intel_niosv_g_0_data_manager_wstrb
 	signal intel_niosv_g_0_data_manager_wready                             : std_logic;                     -- mm_interconnect_0:intel_niosv_g_0_data_manager_wready -> intel_niosv_g_0:data_manager_wready
@@ -400,6 +646,16 @@ architecture rtl of NIOS_RFS2 is
 	signal mm_interconnect_0_intel_niosv_g_0_dm_agent_readdatavalid        : std_logic;                     -- intel_niosv_g_0:dm_agent_readdatavalid -> mm_interconnect_0:intel_niosv_g_0_dm_agent_readdatavalid
 	signal mm_interconnect_0_intel_niosv_g_0_dm_agent_write                : std_logic;                     -- mm_interconnect_0:intel_niosv_g_0_dm_agent_write -> intel_niosv_g_0:dm_agent_write
 	signal mm_interconnect_0_intel_niosv_g_0_dm_agent_writedata            : std_logic_vector(31 downto 0); -- mm_interconnect_0:intel_niosv_g_0_dm_agent_writedata -> intel_niosv_g_0:dm_agent_writedata
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_readdata        : std_logic_vector(31 downto 0); -- mm_clock_crossing_bridge_0:s0_readdata -> mm_interconnect_0:mm_clock_crossing_bridge_0_s0_readdata
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_waitrequest     : std_logic;                     -- mm_clock_crossing_bridge_0:s0_waitrequest -> mm_interconnect_0:mm_clock_crossing_bridge_0_s0_waitrequest
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_debugaccess     : std_logic;                     -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_debugaccess -> mm_clock_crossing_bridge_0:s0_debugaccess
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_address         : std_logic_vector(25 downto 0); -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_address -> mm_clock_crossing_bridge_0:s0_address
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_read            : std_logic;                     -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_read -> mm_clock_crossing_bridge_0:s0_read
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_byteenable      : std_logic_vector(3 downto 0);  -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_byteenable -> mm_clock_crossing_bridge_0:s0_byteenable
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_readdatavalid   : std_logic;                     -- mm_clock_crossing_bridge_0:s0_readdatavalid -> mm_interconnect_0:mm_clock_crossing_bridge_0_s0_readdatavalid
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_write           : std_logic;                     -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_write -> mm_clock_crossing_bridge_0:s0_write
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_writedata       : std_logic_vector(31 downto 0); -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_writedata -> mm_clock_crossing_bridge_0:s0_writedata
+	signal mm_interconnect_0_mm_clock_crossing_bridge_0_s0_burstcount      : std_logic_vector(0 downto 0);  -- mm_interconnect_0:mm_clock_crossing_bridge_0_s0_burstcount -> mm_clock_crossing_bridge_0:s0_burstcount
 	signal mm_interconnect_0_ram_0_s1_chipselect                           : std_logic;                     -- mm_interconnect_0:ram_0_s1_chipselect -> ram_0:chipselect
 	signal mm_interconnect_0_ram_0_s1_readdata                             : std_logic_vector(31 downto 0); -- ram_0:readdata -> mm_interconnect_0:ram_0_s1_readdata
 	signal mm_interconnect_0_ram_0_s1_address                              : std_logic_vector(14 downto 0); -- mm_interconnect_0:ram_0_s1_address -> ram_0:address
@@ -412,6 +668,11 @@ architecture rtl of NIOS_RFS2 is
 	signal mm_interconnect_0_led0_s1_address                               : std_logic_vector(1 downto 0);  -- mm_interconnect_0:led0_s1_address -> led0:address
 	signal mm_interconnect_0_led0_s1_write                                 : std_logic;                     -- mm_interconnect_0:led0_s1_write -> mm_interconnect_0_led0_s1_write:in
 	signal mm_interconnect_0_led0_s1_writedata                             : std_logic_vector(31 downto 0); -- mm_interconnect_0:led0_s1_writedata -> led0:writedata
+	signal mm_interconnect_0_bt0_s1_chipselect                             : std_logic;                     -- mm_interconnect_0:bt0_s1_chipselect -> bt0:chipselect
+	signal mm_interconnect_0_bt0_s1_readdata                               : std_logic_vector(31 downto 0); -- bt0:readdata -> mm_interconnect_0:bt0_s1_readdata
+	signal mm_interconnect_0_bt0_s1_address                                : std_logic_vector(1 downto 0);  -- mm_interconnect_0:bt0_s1_address -> bt0:address
+	signal mm_interconnect_0_bt0_s1_write                                  : std_logic;                     -- mm_interconnect_0:bt0_s1_write -> mm_interconnect_0_bt0_s1_write:in
+	signal mm_interconnect_0_bt0_s1_writedata                              : std_logic_vector(31 downto 0); -- mm_interconnect_0:bt0_s1_writedata -> bt0:writedata
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_readdata       : std_logic_vector(31 downto 0); -- intel_niosv_g_0:timer_sw_agent_readdata -> mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_readdata
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_waitrequest    : std_logic;                     -- intel_niosv_g_0:timer_sw_agent_waitrequest -> mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_waitrequest
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_address        : std_logic_vector(5 downto 0);  -- mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_address -> intel_niosv_g_0:timer_sw_agent_address
@@ -420,21 +681,86 @@ architecture rtl of NIOS_RFS2 is
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_readdatavalid  : std_logic;                     -- intel_niosv_g_0:timer_sw_agent_readdatavalid -> mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_readdatavalid
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_write          : std_logic;                     -- mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_write -> intel_niosv_g_0:timer_sw_agent_write
 	signal mm_interconnect_0_intel_niosv_g_0_timer_sw_agent_writedata      : std_logic_vector(31 downto 0); -- mm_interconnect_0:intel_niosv_g_0_timer_sw_agent_writedata -> intel_niosv_g_0:timer_sw_agent_writedata
+	signal mm_bridge_0_m0_waitrequest                                      : std_logic;                     -- mm_interconnect_2:mm_bridge_0_m0_waitrequest -> mm_bridge_0:m0_waitrequest
+	signal mm_bridge_0_m0_readdata                                         : std_logic_vector(31 downto 0); -- mm_interconnect_2:mm_bridge_0_m0_readdata -> mm_bridge_0:m0_readdata
+	signal mm_bridge_0_m0_debugaccess                                      : std_logic;                     -- mm_bridge_0:m0_debugaccess -> mm_interconnect_2:mm_bridge_0_m0_debugaccess
+	signal mm_bridge_0_m0_address                                          : std_logic_vector(25 downto 0); -- mm_bridge_0:m0_address -> mm_interconnect_2:mm_bridge_0_m0_address
+	signal mm_bridge_0_m0_read                                             : std_logic;                     -- mm_bridge_0:m0_read -> mm_interconnect_2:mm_bridge_0_m0_read
+	signal mm_bridge_0_m0_byteenable                                       : std_logic_vector(3 downto 0);  -- mm_bridge_0:m0_byteenable -> mm_interconnect_2:mm_bridge_0_m0_byteenable
+	signal mm_bridge_0_m0_readdatavalid                                    : std_logic;                     -- mm_interconnect_2:mm_bridge_0_m0_readdatavalid -> mm_bridge_0:m0_readdatavalid
+	signal mm_bridge_0_m0_writedata                                        : std_logic_vector(31 downto 0); -- mm_bridge_0:m0_writedata -> mm_interconnect_2:mm_bridge_0_m0_writedata
+	signal mm_bridge_0_m0_write                                            : std_logic;                     -- mm_bridge_0:m0_write -> mm_interconnect_2:mm_bridge_0_m0_write
+	signal mm_bridge_0_m0_burstcount                                       : std_logic_vector(0 downto 0);  -- mm_bridge_0:m0_burstcount -> mm_interconnect_2:mm_bridge_0_m0_burstcount
+	signal mm_interconnect_2_sdram_s1_chipselect                           : std_logic;                     -- mm_interconnect_2:SDRAM_s1_chipselect -> SDRAM:az_cs
+	signal mm_interconnect_2_sdram_s1_readdata                             : std_logic_vector(15 downto 0); -- SDRAM:za_data -> mm_interconnect_2:SDRAM_s1_readdata
+	signal mm_interconnect_2_sdram_s1_waitrequest                          : std_logic;                     -- SDRAM:za_waitrequest -> mm_interconnect_2:SDRAM_s1_waitrequest
+	signal mm_interconnect_2_sdram_s1_address                              : std_logic_vector(24 downto 0); -- mm_interconnect_2:SDRAM_s1_address -> SDRAM:az_addr
+	signal mm_interconnect_2_sdram_s1_read                                 : std_logic;                     -- mm_interconnect_2:SDRAM_s1_read -> mm_interconnect_2_sdram_s1_read:in
+	signal mm_interconnect_2_sdram_s1_byteenable                           : std_logic_vector(1 downto 0);  -- mm_interconnect_2:SDRAM_s1_byteenable -> mm_interconnect_2_sdram_s1_byteenable:in
+	signal mm_interconnect_2_sdram_s1_readdatavalid                        : std_logic;                     -- SDRAM:za_valid -> mm_interconnect_2:SDRAM_s1_readdatavalid
+	signal mm_interconnect_2_sdram_s1_write                                : std_logic;                     -- mm_interconnect_2:SDRAM_s1_write -> mm_interconnect_2_sdram_s1_write:in
+	signal mm_interconnect_2_sdram_s1_writedata                            : std_logic_vector(15 downto 0); -- mm_interconnect_2:SDRAM_s1_writedata -> SDRAM:az_data
 	signal irq_mapper_receiver0_irq                                        : std_logic;                     -- jtag_uart_0:av_irq -> irq_mapper:receiver0_irq
+	signal irq_mapper_receiver1_irq                                        : std_logic;                     -- bt0:irq -> irq_mapper:receiver1_irq
 	signal intel_niosv_g_0_platform_irq_rx_irq                             : std_logic_vector(15 downto 0); -- irq_mapper:sender_irq -> intel_niosv_g_0:platform_irq_rx_irq
-	signal rst_controller_reset_out_reset                                  : std_logic;                     -- rst_controller:reset_out -> [intel_niosv_g_0:ndm_reset_in_reset, intel_niosv_g_0:reset_reset, irq_mapper:reset, mm_interconnect_0:intel_niosv_g_0_reset_reset_bridge_in_reset_reset, ram_0:reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
+	signal rst_controller_reset_out_reset                                  : std_logic;                     -- rst_controller:reset_out -> [intel_niosv_g_0:ndm_reset_in_reset, intel_niosv_g_0:reset_reset, irq_mapper:reset, mm_clock_crossing_bridge_0:s0_reset, mm_interconnect_0:intel_niosv_g_0_reset_reset_bridge_in_reset_reset, ram_0:reset, rst_controller_reset_out_reset:in, rst_translator:in_reset]
 	signal rst_controller_reset_out_reset_req                              : std_logic;                     -- rst_controller:reset_req -> [ram_0:reset_req, rst_translator:reset_req_in]
-	signal reset_reset_n_ports_inv                                         : std_logic;                     -- reset_reset_n:inv -> rst_controller:reset_in0
+	signal rst_controller_001_reset_out_reset                              : std_logic;                     -- rst_controller_001:reset_out -> [mm_interconnect_0:jtag_uart_0_reset_reset_bridge_in_reset_reset, rst_controller_001_reset_out_reset:in]
+	signal intel_niosv_g_0_dbg_reset_out_reset                             : std_logic;                     -- intel_niosv_g_0:dbg_reset_out_reset -> rst_controller_001:reset_in0
+	signal reset_bridge_100_in_reset_reset_n_ports_inv                     : std_logic;                     -- reset_bridge_100_in_reset_reset_n:inv -> [mm_bridge_0:reset, mm_clock_crossing_bridge_0:m0_reset, mm_interconnect_2:mm_bridge_0_reset_reset_bridge_in_reset_reset]
+	signal reset_bridge_50_in_reset_reset_n_ports_inv                      : std_logic;                     -- reset_bridge_50_in_reset_reset_n:inv -> [rst_controller:reset_in0, rst_controller_001:reset_in1]
 	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv  : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read:inv -> jtag_uart_0:av_read_n
 	signal mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write_ports_inv : std_logic;                     -- mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_write:inv -> jtag_uart_0:av_write_n
 	signal mm_interconnect_0_led0_s1_write_ports_inv                       : std_logic;                     -- mm_interconnect_0_led0_s1_write:inv -> led0:write_n
-	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [jtag_uart_0:rst_n, led0:reset_n, sysid_qsys_0:reset_n]
+	signal mm_interconnect_0_bt0_s1_write_ports_inv                        : std_logic;                     -- mm_interconnect_0_bt0_s1_write:inv -> bt0:write_n
+	signal mm_interconnect_2_sdram_s1_read_ports_inv                       : std_logic;                     -- mm_interconnect_2_sdram_s1_read:inv -> SDRAM:az_rd_n
+	signal mm_interconnect_2_sdram_s1_byteenable_ports_inv                 : std_logic_vector(1 downto 0);  -- mm_interconnect_2_sdram_s1_byteenable:inv -> SDRAM:az_be_n
+	signal mm_interconnect_2_sdram_s1_write_ports_inv                      : std_logic;                     -- mm_interconnect_2_sdram_s1_write:inv -> SDRAM:az_wr_n
+	signal rst_controller_reset_out_reset_ports_inv                        : std_logic;                     -- rst_controller_reset_out_reset:inv -> [bt0:reset_n, led0:reset_n, sysid_qsys_0:reset_n]
+	signal rst_controller_001_reset_out_reset_ports_inv                    : std_logic;                     -- rst_controller_001_reset_out_reset:inv -> jtag_uart_0:rst_n
 
 begin
 
+	sdram : component NIOS_RFS2_SDRAM
+		port map (
+			clk            => clk_100_in_clk_clk,                              --                 clk.clk
+			reset_n        => reset_bridge_100_in_reset_reset_n,               --               reset.reset_n
+			az_addr        => mm_interconnect_2_sdram_s1_address,              --                  s1.address
+			az_be_n        => mm_interconnect_2_sdram_s1_byteenable_ports_inv, --                    .byteenable_n
+			az_cs          => mm_interconnect_2_sdram_s1_chipselect,           --                    .chipselect
+			az_data        => mm_interconnect_2_sdram_s1_writedata,            --                    .writedata
+			az_rd_n        => mm_interconnect_2_sdram_s1_read_ports_inv,       --                    .read_n
+			az_wr_n        => mm_interconnect_2_sdram_s1_write_ports_inv,      --                    .write_n
+			za_data        => mm_interconnect_2_sdram_s1_readdata,             --                    .readdata
+			za_valid       => mm_interconnect_2_sdram_s1_readdatavalid,        --                    .readdatavalid
+			za_waitrequest => mm_interconnect_2_sdram_s1_waitrequest,          --                    .waitrequest
+			zs_addr        => sdram_addr,                                      -- external_connection.export
+			zs_ba          => sdram_ba,                                        --                    .export
+			zs_cas_n       => sdram_cas_n,                                     --                    .export
+			zs_cke         => sdram_cke,                                       --                    .export
+			zs_cs_n        => sdram_cs_n,                                      --                    .export
+			zs_dq          => sdram_dq,                                        --                    .export
+			zs_dqm         => sdram_dqm,                                       --                    .export
+			zs_ras_n       => sdram_ras_n,                                     --                    .export
+			zs_we_n        => sdram_we_n                                       --                    .export
+		);
+
+	bt0 : component NIOS_RFS2_bt0
+		port map (
+			clk        => clk_50_in_clk_clk,                        --                 clk.clk
+			reset_n    => rst_controller_reset_out_reset_ports_inv, --               reset.reset_n
+			address    => mm_interconnect_0_bt0_s1_address,         --                  s1.address
+			write_n    => mm_interconnect_0_bt0_s1_write_ports_inv, --                    .write_n
+			writedata  => mm_interconnect_0_bt0_s1_writedata,       --                    .writedata
+			chipselect => mm_interconnect_0_bt0_s1_chipselect,      --                    .chipselect
+			readdata   => mm_interconnect_0_bt0_s1_readdata,        --                    .readdata
+			in_port    => bt0_export,                               -- external_connection.export
+			irq        => irq_mapper_receiver1_irq                  --                 irq.irq
+		);
+
 	intel_niosv_g_0 : component NIOS_RFS2_intel_niosv_g_0
 		port map (
-			clk                          => clk_clk,                                                        --                 clk.clk
+			clk                          => clk_50_in_clk_clk,                                              --                 clk.clk
 			reset_reset                  => rst_controller_reset_out_reset,                                 --               reset.reset
 			instruction_manager_awsize   => intel_niosv_g_0_instruction_manager_awsize,                     -- instruction_manager.awsize
 			instruction_manager_awlen    => intel_niosv_g_0_instruction_manager_awlen,                      --                    .awlen
@@ -505,7 +831,7 @@ begin
 			dm_agent_writedata           => mm_interconnect_0_intel_niosv_g_0_dm_agent_writedata,           --                    .writedata
 			dm_agent_waitrequest         => mm_interconnect_0_intel_niosv_g_0_dm_agent_waitrequest,         --                    .waitrequest
 			dm_agent_readdatavalid       => mm_interconnect_0_intel_niosv_g_0_dm_agent_readdatavalid,       --                    .readdatavalid
-			dbg_reset_out_reset          => open                                                            --       dbg_reset_out.reset
+			dbg_reset_out_reset          => intel_niosv_g_0_dbg_reset_out_reset                             --       dbg_reset_out.reset
 		);
 
 	jtag_uart_0 : component altera_avalon_jtag_uart
@@ -527,8 +853,8 @@ begin
 			legacySignalAllow          => false
 		)
 		port map (
-			clk            => clk_clk,                                                         --               clk.clk
-			rst_n          => rst_controller_reset_out_reset_ports_inv,                        --             reset.reset_n
+			clk            => clk_50_in_clk_clk,                                               --               clk.clk
+			rst_n          => rst_controller_001_reset_out_reset_ports_inv,                    --             reset.reset_n
 			av_chipselect  => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_chipselect,      -- avalon_jtag_slave.chipselect
 			av_address     => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_address(0),      --                  .address
 			av_read_n      => mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv,  --                  .read_n
@@ -541,7 +867,7 @@ begin
 
 	led0 : component NIOS_RFS2_led0
 		port map (
-			clk        => clk_clk,                                   --                 clk.clk
+			clk        => clk_50_in_clk_clk,                         --                 clk.clk
 			reset_n    => rst_controller_reset_out_reset_ports_inv,  --               reset.reset_n
 			address    => mm_interconnect_0_led0_s1_address,         --                  s1.address
 			write_n    => mm_interconnect_0_led0_s1_write_ports_inv, --                    .write_n
@@ -551,9 +877,83 @@ begin
 			out_port   => led_nios_export                            -- external_connection.export
 		);
 
+	mm_bridge_0 : component altera_avalon_mm_bridge
+		generic map (
+			DATA_WIDTH        => 32,
+			SYMBOL_WIDTH      => 8,
+			HDL_ADDR_WIDTH    => 26,
+			BURSTCOUNT_WIDTH  => 1,
+			PIPELINE_COMMAND  => 1,
+			PIPELINE_RESPONSE => 1
+		)
+		port map (
+			clk              => clk_100_in_clk_clk,                          --   clk.clk
+			reset            => reset_bridge_100_in_reset_reset_n_ports_inv, -- reset.reset
+			s0_waitrequest   => mm_clock_crossing_bridge_0_m0_waitrequest,   --    s0.waitrequest
+			s0_readdata      => mm_clock_crossing_bridge_0_m0_readdata,      --      .readdata
+			s0_readdatavalid => mm_clock_crossing_bridge_0_m0_readdatavalid, --      .readdatavalid
+			s0_burstcount    => mm_clock_crossing_bridge_0_m0_burstcount,    --      .burstcount
+			s0_writedata     => mm_clock_crossing_bridge_0_m0_writedata,     --      .writedata
+			s0_address       => mm_clock_crossing_bridge_0_m0_address,       --      .address
+			s0_write         => mm_clock_crossing_bridge_0_m0_write,         --      .write
+			s0_read          => mm_clock_crossing_bridge_0_m0_read,          --      .read
+			s0_byteenable    => mm_clock_crossing_bridge_0_m0_byteenable,    --      .byteenable
+			s0_debugaccess   => mm_clock_crossing_bridge_0_m0_debugaccess,   --      .debugaccess
+			m0_waitrequest   => mm_bridge_0_m0_waitrequest,                  --    m0.waitrequest
+			m0_readdata      => mm_bridge_0_m0_readdata,                     --      .readdata
+			m0_readdatavalid => mm_bridge_0_m0_readdatavalid,                --      .readdatavalid
+			m0_burstcount    => mm_bridge_0_m0_burstcount,                   --      .burstcount
+			m0_writedata     => mm_bridge_0_m0_writedata,                    --      .writedata
+			m0_address       => mm_bridge_0_m0_address,                      --      .address
+			m0_write         => mm_bridge_0_m0_write,                        --      .write
+			m0_read          => mm_bridge_0_m0_read,                         --      .read
+			m0_byteenable    => mm_bridge_0_m0_byteenable,                   --      .byteenable
+			m0_debugaccess   => mm_bridge_0_m0_debugaccess,                  --      .debugaccess
+			s0_response      => open,                                        -- (terminated)
+			m0_response      => "00"                                         -- (terminated)
+		);
+
+	mm_clock_crossing_bridge_0 : component altera_avalon_mm_clock_crossing_bridge
+		generic map (
+			DATA_WIDTH          => 32,
+			SYMBOL_WIDTH        => 8,
+			HDL_ADDR_WIDTH      => 26,
+			BURSTCOUNT_WIDTH    => 1,
+			COMMAND_FIFO_DEPTH  => 64,
+			RESPONSE_FIFO_DEPTH => 64,
+			MASTER_SYNC_DEPTH   => 2,
+			SLAVE_SYNC_DEPTH    => 2
+		)
+		port map (
+			m0_clk           => clk_100_in_clk_clk,                                            --   m0_clk.clk
+			m0_reset         => reset_bridge_100_in_reset_reset_n_ports_inv,                   -- m0_reset.reset
+			s0_clk           => clk_50_in_clk_clk,                                             --   s0_clk.clk
+			s0_reset         => rst_controller_reset_out_reset,                                -- s0_reset.reset
+			s0_waitrequest   => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_waitrequest,   --       s0.waitrequest
+			s0_readdata      => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_readdata,      --         .readdata
+			s0_readdatavalid => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_readdatavalid, --         .readdatavalid
+			s0_burstcount    => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_burstcount,    --         .burstcount
+			s0_writedata     => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_writedata,     --         .writedata
+			s0_address       => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_address,       --         .address
+			s0_write         => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_write,         --         .write
+			s0_read          => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_read,          --         .read
+			s0_byteenable    => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_byteenable,    --         .byteenable
+			s0_debugaccess   => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_debugaccess,   --         .debugaccess
+			m0_waitrequest   => mm_clock_crossing_bridge_0_m0_waitrequest,                     --       m0.waitrequest
+			m0_readdata      => mm_clock_crossing_bridge_0_m0_readdata,                        --         .readdata
+			m0_readdatavalid => mm_clock_crossing_bridge_0_m0_readdatavalid,                   --         .readdatavalid
+			m0_burstcount    => mm_clock_crossing_bridge_0_m0_burstcount,                      --         .burstcount
+			m0_writedata     => mm_clock_crossing_bridge_0_m0_writedata,                       --         .writedata
+			m0_address       => mm_clock_crossing_bridge_0_m0_address,                         --         .address
+			m0_write         => mm_clock_crossing_bridge_0_m0_write,                           --         .write
+			m0_read          => mm_clock_crossing_bridge_0_m0_read,                            --         .read
+			m0_byteenable    => mm_clock_crossing_bridge_0_m0_byteenable,                      --         .byteenable
+			m0_debugaccess   => mm_clock_crossing_bridge_0_m0_debugaccess                      --         .debugaccess
+		);
+
 	ram_0 : component NIOS_RFS2_ram_0
 		port map (
-			clk        => clk_clk,                               --   clk1.clk
+			clk        => clk_50_in_clk_clk,                     --   clk1.clk
 			address    => mm_interconnect_0_ram_0_s1_address,    --     s1.address
 			clken      => mm_interconnect_0_ram_0_s1_clken,      --       .clken
 			chipselect => mm_interconnect_0_ram_0_s1_chipselect, --       .chipselect
@@ -568,7 +968,7 @@ begin
 
 	sysid_qsys_0 : component NIOS_RFS2_sysid_qsys_0
 		port map (
-			clock    => clk_clk,                                                 --           clk.clk
+			clock    => clk_50_in_clk_clk,                                       --           clk.clk
 			reset_n  => rst_controller_reset_out_reset_ports_inv,                --         reset.reset_n
 			readdata => mm_interconnect_0_sysid_qsys_0_control_slave_readdata,   -- control_slave.readdata
 			address  => mm_interconnect_0_sysid_qsys_0_control_slave_address(0)  --              .address
@@ -628,8 +1028,14 @@ begin
 			intel_niosv_g_0_instruction_manager_rlast         => intel_niosv_g_0_instruction_manager_rlast,                      --                                            .rlast
 			intel_niosv_g_0_instruction_manager_rvalid        => intel_niosv_g_0_instruction_manager_rvalid,                     --                                            .rvalid
 			intel_niosv_g_0_instruction_manager_rready        => intel_niosv_g_0_instruction_manager_rready,                     --                                            .rready
-			clk_75_clk_clk                                    => clk_clk,                                                        --                                  clk_75_clk.clk
+			clk_50_out_clk_clk                                => clk_50_in_clk_clk,                                              --                              clk_50_out_clk.clk
 			intel_niosv_g_0_reset_reset_bridge_in_reset_reset => rst_controller_reset_out_reset,                                 -- intel_niosv_g_0_reset_reset_bridge_in_reset.reset
+			jtag_uart_0_reset_reset_bridge_in_reset_reset     => rst_controller_001_reset_out_reset,                             --     jtag_uart_0_reset_reset_bridge_in_reset.reset
+			bt0_s1_address                                    => mm_interconnect_0_bt0_s1_address,                               --                                      bt0_s1.address
+			bt0_s1_write                                      => mm_interconnect_0_bt0_s1_write,                                 --                                            .write
+			bt0_s1_readdata                                   => mm_interconnect_0_bt0_s1_readdata,                              --                                            .readdata
+			bt0_s1_writedata                                  => mm_interconnect_0_bt0_s1_writedata,                             --                                            .writedata
+			bt0_s1_chipselect                                 => mm_interconnect_0_bt0_s1_chipselect,                            --                                            .chipselect
 			intel_niosv_g_0_dm_agent_address                  => mm_interconnect_0_intel_niosv_g_0_dm_agent_address,             --                    intel_niosv_g_0_dm_agent.address
 			intel_niosv_g_0_dm_agent_write                    => mm_interconnect_0_intel_niosv_g_0_dm_agent_write,               --                                            .write
 			intel_niosv_g_0_dm_agent_read                     => mm_interconnect_0_intel_niosv_g_0_dm_agent_read,                --                                            .read
@@ -657,6 +1063,16 @@ begin
 			led0_s1_readdata                                  => mm_interconnect_0_led0_s1_readdata,                             --                                            .readdata
 			led0_s1_writedata                                 => mm_interconnect_0_led0_s1_writedata,                            --                                            .writedata
 			led0_s1_chipselect                                => mm_interconnect_0_led0_s1_chipselect,                           --                                            .chipselect
+			mm_clock_crossing_bridge_0_s0_address             => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_address,        --               mm_clock_crossing_bridge_0_s0.address
+			mm_clock_crossing_bridge_0_s0_write               => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_write,          --                                            .write
+			mm_clock_crossing_bridge_0_s0_read                => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_read,           --                                            .read
+			mm_clock_crossing_bridge_0_s0_readdata            => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_readdata,       --                                            .readdata
+			mm_clock_crossing_bridge_0_s0_writedata           => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_writedata,      --                                            .writedata
+			mm_clock_crossing_bridge_0_s0_burstcount          => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_burstcount,     --                                            .burstcount
+			mm_clock_crossing_bridge_0_s0_byteenable          => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_byteenable,     --                                            .byteenable
+			mm_clock_crossing_bridge_0_s0_readdatavalid       => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_readdatavalid,  --                                            .readdatavalid
+			mm_clock_crossing_bridge_0_s0_waitrequest         => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_waitrequest,    --                                            .waitrequest
+			mm_clock_crossing_bridge_0_s0_debugaccess         => mm_interconnect_0_mm_clock_crossing_bridge_0_s0_debugaccess,    --                                            .debugaccess
 			ram_0_s1_address                                  => mm_interconnect_0_ram_0_s1_address,                             --                                    ram_0_s1.address
 			ram_0_s1_write                                    => mm_interconnect_0_ram_0_s1_write,                               --                                            .write
 			ram_0_s1_readdata                                 => mm_interconnect_0_ram_0_s1_readdata,                            --                                            .readdata
@@ -668,15 +1084,41 @@ begin
 			sysid_qsys_0_control_slave_readdata               => mm_interconnect_0_sysid_qsys_0_control_slave_readdata           --                                            .readdata
 		);
 
+	mm_interconnect_2 : component NIOS_RFS2_mm_interconnect_2
+		port map (
+			clk_100_out_clk_clk                           => clk_100_in_clk_clk,                          --                         clk_100_out_clk.clk
+			mm_bridge_0_reset_reset_bridge_in_reset_reset => reset_bridge_100_in_reset_reset_n_ports_inv, -- mm_bridge_0_reset_reset_bridge_in_reset.reset
+			mm_bridge_0_m0_address                        => mm_bridge_0_m0_address,                      --                          mm_bridge_0_m0.address
+			mm_bridge_0_m0_waitrequest                    => mm_bridge_0_m0_waitrequest,                  --                                        .waitrequest
+			mm_bridge_0_m0_burstcount                     => mm_bridge_0_m0_burstcount,                   --                                        .burstcount
+			mm_bridge_0_m0_byteenable                     => mm_bridge_0_m0_byteenable,                   --                                        .byteenable
+			mm_bridge_0_m0_read                           => mm_bridge_0_m0_read,                         --                                        .read
+			mm_bridge_0_m0_readdata                       => mm_bridge_0_m0_readdata,                     --                                        .readdata
+			mm_bridge_0_m0_readdatavalid                  => mm_bridge_0_m0_readdatavalid,                --                                        .readdatavalid
+			mm_bridge_0_m0_write                          => mm_bridge_0_m0_write,                        --                                        .write
+			mm_bridge_0_m0_writedata                      => mm_bridge_0_m0_writedata,                    --                                        .writedata
+			mm_bridge_0_m0_debugaccess                    => mm_bridge_0_m0_debugaccess,                  --                                        .debugaccess
+			SDRAM_s1_address                              => mm_interconnect_2_sdram_s1_address,          --                                SDRAM_s1.address
+			SDRAM_s1_write                                => mm_interconnect_2_sdram_s1_write,            --                                        .write
+			SDRAM_s1_read                                 => mm_interconnect_2_sdram_s1_read,             --                                        .read
+			SDRAM_s1_readdata                             => mm_interconnect_2_sdram_s1_readdata,         --                                        .readdata
+			SDRAM_s1_writedata                            => mm_interconnect_2_sdram_s1_writedata,        --                                        .writedata
+			SDRAM_s1_byteenable                           => mm_interconnect_2_sdram_s1_byteenable,       --                                        .byteenable
+			SDRAM_s1_readdatavalid                        => mm_interconnect_2_sdram_s1_readdatavalid,    --                                        .readdatavalid
+			SDRAM_s1_waitrequest                          => mm_interconnect_2_sdram_s1_waitrequest,      --                                        .waitrequest
+			SDRAM_s1_chipselect                           => mm_interconnect_2_sdram_s1_chipselect        --                                        .chipselect
+		);
+
 	irq_mapper : component NIOS_RFS2_irq_mapper
 		port map (
-			clk           => clk_clk,                             --       clk.clk
+			clk           => clk_50_in_clk_clk,                   --       clk.clk
 			reset         => rst_controller_reset_out_reset,      -- clk_reset.reset
 			receiver0_irq => irq_mapper_receiver0_irq,            -- receiver0.irq
+			receiver1_irq => irq_mapper_receiver1_irq,            -- receiver1.irq
 			sender_irq    => intel_niosv_g_0_platform_irq_rx_irq  --    sender.irq
 		);
 
-	rst_controller : component altera_reset_controller
+	rst_controller : component nios_rfs2_rst_controller
 		generic map (
 			NUM_RESET_INPUTS          => 1,
 			OUTPUT_RESET_SYNC_EDGES   => "deassert",
@@ -704,44 +1146,111 @@ begin
 			ADAPT_RESET_REQUEST       => 0
 		)
 		port map (
-			reset_in0      => reset_reset_n_ports_inv,            -- reset_in0.reset
-			clk            => clk_clk,                            --       clk.clk
-			reset_out      => rst_controller_reset_out_reset,     -- reset_out.reset
-			reset_req      => rst_controller_reset_out_reset_req, --          .reset_req
-			reset_req_in0  => '0',                                -- (terminated)
-			reset_in1      => '0',                                -- (terminated)
-			reset_req_in1  => '0',                                -- (terminated)
-			reset_in2      => '0',                                -- (terminated)
-			reset_req_in2  => '0',                                -- (terminated)
-			reset_in3      => '0',                                -- (terminated)
-			reset_req_in3  => '0',                                -- (terminated)
-			reset_in4      => '0',                                -- (terminated)
-			reset_req_in4  => '0',                                -- (terminated)
-			reset_in5      => '0',                                -- (terminated)
-			reset_req_in5  => '0',                                -- (terminated)
-			reset_in6      => '0',                                -- (terminated)
-			reset_req_in6  => '0',                                -- (terminated)
-			reset_in7      => '0',                                -- (terminated)
-			reset_req_in7  => '0',                                -- (terminated)
-			reset_in8      => '0',                                -- (terminated)
-			reset_req_in8  => '0',                                -- (terminated)
-			reset_in9      => '0',                                -- (terminated)
-			reset_req_in9  => '0',                                -- (terminated)
-			reset_in10     => '0',                                -- (terminated)
-			reset_req_in10 => '0',                                -- (terminated)
-			reset_in11     => '0',                                -- (terminated)
-			reset_req_in11 => '0',                                -- (terminated)
-			reset_in12     => '0',                                -- (terminated)
-			reset_req_in12 => '0',                                -- (terminated)
-			reset_in13     => '0',                                -- (terminated)
-			reset_req_in13 => '0',                                -- (terminated)
-			reset_in14     => '0',                                -- (terminated)
-			reset_req_in14 => '0',                                -- (terminated)
-			reset_in15     => '0',                                -- (terminated)
-			reset_req_in15 => '0'                                 -- (terminated)
+			reset_in0      => reset_bridge_50_in_reset_reset_n_ports_inv, -- reset_in0.reset
+			clk            => clk_50_in_clk_clk,                          --       clk.clk
+			reset_out      => rst_controller_reset_out_reset,             -- reset_out.reset
+			reset_req      => rst_controller_reset_out_reset_req,         --          .reset_req
+			reset_req_in0  => '0',                                        -- (terminated)
+			reset_in1      => '0',                                        -- (terminated)
+			reset_req_in1  => '0',                                        -- (terminated)
+			reset_in2      => '0',                                        -- (terminated)
+			reset_req_in2  => '0',                                        -- (terminated)
+			reset_in3      => '0',                                        -- (terminated)
+			reset_req_in3  => '0',                                        -- (terminated)
+			reset_in4      => '0',                                        -- (terminated)
+			reset_req_in4  => '0',                                        -- (terminated)
+			reset_in5      => '0',                                        -- (terminated)
+			reset_req_in5  => '0',                                        -- (terminated)
+			reset_in6      => '0',                                        -- (terminated)
+			reset_req_in6  => '0',                                        -- (terminated)
+			reset_in7      => '0',                                        -- (terminated)
+			reset_req_in7  => '0',                                        -- (terminated)
+			reset_in8      => '0',                                        -- (terminated)
+			reset_req_in8  => '0',                                        -- (terminated)
+			reset_in9      => '0',                                        -- (terminated)
+			reset_req_in9  => '0',                                        -- (terminated)
+			reset_in10     => '0',                                        -- (terminated)
+			reset_req_in10 => '0',                                        -- (terminated)
+			reset_in11     => '0',                                        -- (terminated)
+			reset_req_in11 => '0',                                        -- (terminated)
+			reset_in12     => '0',                                        -- (terminated)
+			reset_req_in12 => '0',                                        -- (terminated)
+			reset_in13     => '0',                                        -- (terminated)
+			reset_req_in13 => '0',                                        -- (terminated)
+			reset_in14     => '0',                                        -- (terminated)
+			reset_req_in14 => '0',                                        -- (terminated)
+			reset_in15     => '0',                                        -- (terminated)
+			reset_req_in15 => '0'                                         -- (terminated)
 		);
 
-	reset_reset_n_ports_inv <= not reset_reset_n;
+	rst_controller_001 : component nios_rfs2_rst_controller_001
+		generic map (
+			NUM_RESET_INPUTS          => 2,
+			OUTPUT_RESET_SYNC_EDGES   => "deassert",
+			SYNC_DEPTH                => 2,
+			RESET_REQUEST_PRESENT     => 0,
+			RESET_REQ_WAIT_TIME       => 1,
+			MIN_RST_ASSERTION_TIME    => 3,
+			RESET_REQ_EARLY_DSRT_TIME => 1,
+			USE_RESET_REQUEST_IN0     => 0,
+			USE_RESET_REQUEST_IN1     => 0,
+			USE_RESET_REQUEST_IN2     => 0,
+			USE_RESET_REQUEST_IN3     => 0,
+			USE_RESET_REQUEST_IN4     => 0,
+			USE_RESET_REQUEST_IN5     => 0,
+			USE_RESET_REQUEST_IN6     => 0,
+			USE_RESET_REQUEST_IN7     => 0,
+			USE_RESET_REQUEST_IN8     => 0,
+			USE_RESET_REQUEST_IN9     => 0,
+			USE_RESET_REQUEST_IN10    => 0,
+			USE_RESET_REQUEST_IN11    => 0,
+			USE_RESET_REQUEST_IN12    => 0,
+			USE_RESET_REQUEST_IN13    => 0,
+			USE_RESET_REQUEST_IN14    => 0,
+			USE_RESET_REQUEST_IN15    => 0,
+			ADAPT_RESET_REQUEST       => 0
+		)
+		port map (
+			reset_in0      => intel_niosv_g_0_dbg_reset_out_reset,        -- reset_in0.reset
+			reset_in1      => reset_bridge_50_in_reset_reset_n_ports_inv, -- reset_in1.reset
+			clk            => clk_50_in_clk_clk,                          --       clk.clk
+			reset_out      => rst_controller_001_reset_out_reset,         -- reset_out.reset
+			reset_req      => open,                                       -- (terminated)
+			reset_req_in0  => '0',                                        -- (terminated)
+			reset_req_in1  => '0',                                        -- (terminated)
+			reset_in2      => '0',                                        -- (terminated)
+			reset_req_in2  => '0',                                        -- (terminated)
+			reset_in3      => '0',                                        -- (terminated)
+			reset_req_in3  => '0',                                        -- (terminated)
+			reset_in4      => '0',                                        -- (terminated)
+			reset_req_in4  => '0',                                        -- (terminated)
+			reset_in5      => '0',                                        -- (terminated)
+			reset_req_in5  => '0',                                        -- (terminated)
+			reset_in6      => '0',                                        -- (terminated)
+			reset_req_in6  => '0',                                        -- (terminated)
+			reset_in7      => '0',                                        -- (terminated)
+			reset_req_in7  => '0',                                        -- (terminated)
+			reset_in8      => '0',                                        -- (terminated)
+			reset_req_in8  => '0',                                        -- (terminated)
+			reset_in9      => '0',                                        -- (terminated)
+			reset_req_in9  => '0',                                        -- (terminated)
+			reset_in10     => '0',                                        -- (terminated)
+			reset_req_in10 => '0',                                        -- (terminated)
+			reset_in11     => '0',                                        -- (terminated)
+			reset_req_in11 => '0',                                        -- (terminated)
+			reset_in12     => '0',                                        -- (terminated)
+			reset_req_in12 => '0',                                        -- (terminated)
+			reset_in13     => '0',                                        -- (terminated)
+			reset_req_in13 => '0',                                        -- (terminated)
+			reset_in14     => '0',                                        -- (terminated)
+			reset_req_in14 => '0',                                        -- (terminated)
+			reset_in15     => '0',                                        -- (terminated)
+			reset_req_in15 => '0'                                         -- (terminated)
+		);
+
+	reset_bridge_100_in_reset_reset_n_ports_inv <= not reset_bridge_100_in_reset_reset_n;
+
+	reset_bridge_50_in_reset_reset_n_ports_inv <= not reset_bridge_50_in_reset_reset_n;
 
 	mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read_ports_inv <= not mm_interconnect_0_jtag_uart_0_avalon_jtag_slave_read;
 
@@ -749,6 +1258,16 @@ begin
 
 	mm_interconnect_0_led0_s1_write_ports_inv <= not mm_interconnect_0_led0_s1_write;
 
+	mm_interconnect_0_bt0_s1_write_ports_inv <= not mm_interconnect_0_bt0_s1_write;
+
+	mm_interconnect_2_sdram_s1_read_ports_inv <= not mm_interconnect_2_sdram_s1_read;
+
+	mm_interconnect_2_sdram_s1_byteenable_ports_inv <= not mm_interconnect_2_sdram_s1_byteenable;
+
+	mm_interconnect_2_sdram_s1_write_ports_inv <= not mm_interconnect_2_sdram_s1_write;
+
 	rst_controller_reset_out_reset_ports_inv <= not rst_controller_reset_out_reset;
+
+	rst_controller_001_reset_out_reset_ports_inv <= not rst_controller_001_reset_out_reset;
 
 end architecture rtl; -- of NIOS_RFS2

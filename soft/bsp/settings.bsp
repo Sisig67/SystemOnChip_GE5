@@ -2,12 +2,12 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal2</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>23 sept. 2025 10:53:26</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1758617606178</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>30 sept. 2025 10:45:14</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1759221914673</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>Z:\FPGA\GoldenTop\soft\bsp</BspGeneratedLocation>
         <BspSettingsFile>Z:\FPGA\GoldenTop\soft\bsp\settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\NIOS_RFS2.sopcinfo</SopcDesignFile>
-        <SystemFileHash>a2d2ec50be977940aa87a8f2414dea6312e99a853ec8e2e9bdedeb136d4b4da9</SystemFileHash>
+        <SystemFileHash>fedf61df744c9be75df0addc99e96567641e99ab422114ada7a547439ec95</SystemFileHash>
         <JdiFile>default</JdiFile>
         <Cpu>intel_niosv_g_0</Cpu>
         <SchemaVersion>1.9</SchemaVersion>
@@ -171,7 +171,7 @@
                 <SettingName>hal.linker.exception_stack_memory_region_name</SettingName>
                 <Identifier>none</Identifier>
                 <Type>UnquotedString</Type>
-                <Value>ram_0</Value>
+                <Value>SDRAM</Value>
                 <DefaultValue>none</DefaultValue>
                 <DestinationFile>none</DestinationFile>
                 <Description>Name of the existing memory region that will be divided up to create the 'exception_stack' memory region. The selected region name will be adjusted automatically when the BSP is generated to create the 'exception_stack' memory region.</Description>
@@ -600,74 +600,86 @@
                 <Group xsi:nil="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"/>
         </Setting>
         <MemoryMap>
+                <slaveDescriptor>SDRAM</slaveDescriptor>
+                <addressRange>0x00000000 - 0x03FFFFFF</addressRange>
+                <addressSpan>67108864</addressSpan>
+                <attributes>memory</attributes>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>ram_0</slaveDescriptor>
-                <addressRange>0x00000000 - 0x0001FFFF</addressRange>
+                <addressRange>0x04000000 - 0x0401FFFF</addressRange>
                 <addressSpan>131072</addressSpan>
                 <attributes>memory</attributes>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>intel_niosv_g_0_dm_agent</slaveDescriptor>
-                <addressRange>0x00020000 - 0x0002FFFF</addressRange>
+                <addressRange>0x04020000 - 0x0402FFFF</addressRange>
                 <addressSpan>65536</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>intel_niosv_g_0_timer_sw_agent</slaveDescriptor>
-                <addressRange>0x00030000 - 0x0003003F</addressRange>
+                <addressRange>0x04030000 - 0x0403003F</addressRange>
                 <addressSpan>64</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>bt0</slaveDescriptor>
+                <addressRange>0x04030040 - 0x0403004F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>led0</slaveDescriptor>
-                <addressRange>0x00030040 - 0x0003004F</addressRange>
+                <addressRange>0x04030050 - 0x0403005F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>sysid_qsys_0</slaveDescriptor>
-                <addressRange>0x00030050 - 0x00030057</addressRange>
+                <addressRange>0x04030060 - 0x04030067</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x00030058 - 0x0003005F</addressRange>
+                <addressRange>0x04030068 - 0x0403006F</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>
         <LinkerSection>
                 <sectionName>.text</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
         <LinkerSection>
                 <sectionName>.exceptions</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
         <LinkerSection>
                 <sectionName>.rodata</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
         <LinkerSection>
                 <sectionName>.rwdata</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
         <LinkerSection>
                 <sectionName>.bss</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
         <LinkerSection>
                 <sectionName>.heap</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
         <LinkerSection>
                 <sectionName>.stack</sectionName>
-                <regionName>ram_0</regionName>
+                <regionName>SDRAM</regionName>
                 <noLoad>false</noLoad>
         </LinkerSection>
 </sch:Settings>

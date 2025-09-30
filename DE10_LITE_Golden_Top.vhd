@@ -78,9 +78,21 @@ architecture struct of DE10_LITE_Golden_Top is
 
 	component NIOS_RFS2 is
 		port (
-			clk_clk       : in std_logic := 'X'; -- clk
-			reset_reset_n : in std_logic := 'X';  -- reset_n
-			led_nios_export : out std_logic_vector(9 downto 0)         -- export
+			led_nios_export                   : out   std_logic_vector(9 downto 0);                     -- export
+			clk_50_in_clk_clk                 : in    std_logic                     := 'X';             -- clk
+			reset_bridge_50_in_reset_reset_n  : in    std_logic                     := 'X';             -- reset_n
+			clk_100_in_clk_clk                : in    std_logic                     := 'X';             -- clk
+			reset_bridge_100_in_reset_reset_n : in    std_logic                     := 'X';             -- reset_n
+			sdram_addr                        : out   std_logic_vector(12 downto 0);                    -- addr
+			sdram_ba                          : out   std_logic_vector(1 downto 0);                     -- ba
+			sdram_cas_n                       : out   std_logic;                                        -- cas_n
+			sdram_cke                         : out   std_logic;                                        -- cke
+			sdram_cs_n                        : out   std_logic;                                        -- cs_n
+			sdram_dq                          : inout std_logic_vector(15 downto 0) := (others => 'X'); -- dq
+			sdram_dqm                         : out   std_logic_vector(1 downto 0);                     -- dqm
+			sdram_ras_n                       : out   std_logic;                                        -- ras_n
+			sdram_we_n                        : out   std_logic;                                        -- we_n
+			bt0_export                        : in    std_logic                     := 'X'              -- export
 		);
 	end component NIOS_RFS2;
 
@@ -88,27 +100,51 @@ architecture struct of DE10_LITE_Golden_Top is
 		PORT
 			(
 				inclk0		: IN STD_LOGIC  := '0';
-				c0		: OUT STD_LOGIC
+				c0		: OUT STD_LOGIC;
+				c1		: OUT STD_LOGIC;
+				c2		: OUT STD_LOGIC
 			);
 	end component;
 
-	signal clk_75 : std_logic;
+	signal clk_50 : std_logic;
+	signal clk_100 : std_logic;
+	signal clk_100_sdram : std_logic;
 
 begin
 	--
 	u0 : component NIOS_RFS2
-		port map (
-			clk_clk       => clk_75,       --   clk.clk
-			reset_reset_n => KEY(0),  -- reset.reset_n
+		port map (		
+			clk_50_in_clk_clk                 => clk_50,                 --             clk_50_in_clk.clk
+			reset_bridge_50_in_reset_reset_n  => KEY(0),  --  reset_bridge_50_in_reset.reset_n
+			clk_100_in_clk_clk                => clk_100,                --            clk_100_in_clk.clk
+			reset_bridge_100_in_reset_reset_n => KEY(0), -- reset_bridge_100_in_reset.reset_n
+			sdram_addr                        => DRAM_ADDR,                        --                     sdram.addr
+			sdram_ba                          => DRAM_BA,                          --                          .ba
+			sdram_cas_n                       => DRAM_CAS_N,                       --                          .cas_n
+			sdram_cke                         => DRAM_CKE,                         --                          .cke
+			sdram_cs_n                        => DRAM_CS_N,                        --                          .cs_n
+			sdram_dq                          => DRAM_DQ,                          --                          .dq
+			sdram_dqm(1)                      => (DRAM_UDQM),
+			sdram_dqm(0)                      => (DRAM_LDQM),			--                          .dqm
+			sdram_ras_n                       => DRAM_RAS_N,                       --                          .ras_n
+			sdram_we_n                        => DRAM_WE_N,                        --                          .we_n
+			
+			
+			bt0_export                        => KEY(1),                         	  --                       bt0.export
 			led_nios_export => LEDR  -- led_nios.export
 		);
 		
 	U1 : component pll2	
 		port map(
 					inclk0 => MAX10_CLK1_50,
-					c0 => clk_75
+					c0 => clk_50,
+					c1 => clk_100,
+					c2 => clk_100_sdram
 				);
-
+		
+		DRAM_CLK <= clk_100_sdram;
+		
+		
 		GPIO <= (others=>'Z');
 		
 		HEX0 <= (others => '1');

@@ -56,10 +56,17 @@ add_custom_target(niosv-stack-report ALL DEPENDS "${stack_report_file}")
 # Generate HEX file(s) from app.elf using elf2hex tool.
 # Note : If ECC Full is enabled, width of 39 is set for NiosV TCM. Otherwise, 32.
 add_custom_command(
+    OUTPUT "SDRAM.hex"
+    DEPENDS app.elf
+    COMMAND elf2hex app.elf -o SDRAM.hex -b 0x00000000 -w 32 -e 0x03FFFFFF -r 4
+    COMMENT "Creating SDRAM.hex."
+    VERBATIM
+)
+add_custom_command(
     OUTPUT "ram_0.hex"
     DEPENDS app.elf
-    COMMAND elf2hex app.elf -o ram_0.hex -b 0x00000000 -w 32 -e 0x0001FFFF -r 4
+    COMMAND elf2hex app.elf -o ram_0.hex -b 0x04000000 -w 32 -e 0x0401FFFF -r 4
     COMMENT "Creating ram_0.hex."
     VERBATIM
 )
-add_custom_target(create-hex ALL DEPENDS "ram_0.hex")
+add_custom_target(create-hex ALL DEPENDS "SDRAM.hex" "ram_0.hex")

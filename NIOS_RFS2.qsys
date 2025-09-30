@@ -9,7 +9,47 @@
    categories="System" />
  <parameter name="bonusData"><![CDATA[bonusData 
 {
-   element clk_75
+   element SDRAM
+   {
+      datum _sortIndex
+      {
+         value = "12";
+         type = "int";
+      }
+   }
+   element SDRAM.s1
+   {
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
+      }
+   }
+   element bt0
+   {
+      datum _sortIndex
+      {
+         value = "9";
+         type = "int";
+      }
+   }
+   element bt0.s1
+   {
+      datum baseAddress
+      {
+         value = "67305536";
+         type = "String";
+      }
+   }
+   element clk_100
+   {
+      datum _sortIndex
+      {
+         value = "1";
+         type = "int";
+      }
+   }
+   element clk_50
    {
       datum _sortIndex
       {
@@ -21,7 +61,7 @@
    {
       datum _sortIndex
       {
-         value = "1";
+         value = "4";
          type = "int";
       }
       datum sopceditor_expanded
@@ -34,7 +74,7 @@
    {
       datum baseAddress
       {
-         value = "131072";
+         value = "67239936";
          type = "String";
       }
    }
@@ -42,7 +82,7 @@
    {
       datum baseAddress
       {
-         value = "196608";
+         value = "67305472";
          type = "String";
       }
    }
@@ -50,7 +90,7 @@
    {
       datum _sortIndex
       {
-         value = "3";
+         value = "6";
          type = "int";
       }
    }
@@ -58,7 +98,7 @@
    {
       datum baseAddress
       {
-         value = "196696";
+         value = "67305576";
          type = "String";
       }
    }
@@ -66,7 +106,7 @@
    {
       datum _sortIndex
       {
-         value = "5";
+         value = "8";
          type = "int";
       }
    }
@@ -74,19 +114,19 @@
    {
       datum baseAddress
       {
-         value = "196672";
+         value = "67305552";
          type = "String";
       }
    }
-   element ram_0
+   element mm_bridge_0
    {
       datum _sortIndex
       {
-         value = "2";
+         value = "11";
          type = "int";
       }
    }
-   element ram_0.s1
+   element mm_bridge_0.s0
    {
       datum baseAddress
       {
@@ -94,11 +134,59 @@
          type = "String";
       }
    }
+   element mm_clock_crossing_bridge_0
+   {
+      datum _sortIndex
+      {
+         value = "10";
+         type = "int";
+      }
+   }
+   element mm_clock_crossing_bridge_0.s0
+   {
+      datum baseAddress
+      {
+         value = "0";
+         type = "String";
+      }
+   }
+   element ram_0
+   {
+      datum _sortIndex
+      {
+         value = "5";
+         type = "int";
+      }
+   }
+   element ram_0.s1
+   {
+      datum baseAddress
+      {
+         value = "67108864";
+         type = "String";
+      }
+   }
+   element reset_bridge_100
+   {
+      datum _sortIndex
+      {
+         value = "3";
+         type = "int";
+      }
+   }
+   element reset_bridge_50
+   {
+      datum _sortIndex
+      {
+         value = "2";
+         type = "int";
+      }
+   }
    element sysid_qsys_0
    {
       datum _sortIndex
       {
-         value = "4";
+         value = "7";
          type = "int";
       }
    }
@@ -106,7 +194,7 @@
    {
       datum baseAddress
       {
-         value = "196688";
+         value = "67305568";
          type = "String";
       }
    }
@@ -131,26 +219,97 @@
  <parameter name="timeStamp" value="0" />
  <parameter name="useTestBenchNamingPattern" value="false" />
  <instanceScript></instanceScript>
- <interface name="clk" internal="clk_75.clk_in" type="clock" dir="end" />
+ <interface
+   name="bt0"
+   internal="bt0.external_connection"
+   type="conduit"
+   dir="end" />
+ <interface
+   name="clk_100_in_clk"
+   internal="clk_100.in_clk"
+   type="clock"
+   dir="end" />
+ <interface name="clk_50_in_clk" internal="clk_50.in_clk" type="clock" dir="end" />
  <interface
    name="led_nios"
    internal="led0.external_connection"
    type="conduit"
    dir="end" />
- <interface name="reset" internal="clk_75.clk_in_reset" type="reset" dir="end" />
- <module name="clk_75" kind="clock_source" version="24.1" enabled="1">
-  <parameter name="clockFrequency" value="50000000" />
-  <parameter name="clockFrequencyKnown" value="true" />
-  <parameter name="inputClockFrequency" value="0" />
-  <parameter name="resetSynchronousEdges" value="NONE" />
+ <interface
+   name="reset_bridge_100_in_reset"
+   internal="reset_bridge_100.in_reset"
+   type="reset"
+   dir="end" />
+ <interface
+   name="reset_bridge_50_in_reset"
+   internal="reset_bridge_50.in_reset"
+   type="reset"
+   dir="end" />
+ <interface
+   name="sdram"
+   internal="SDRAM.external_connection"
+   type="conduit"
+   dir="end" />
+ <module
+   name="SDRAM"
+   kind="altera_avalon_new_sdram_controller"
+   version="24.1"
+   enabled="1">
+  <parameter name="TAC" value="5.4" />
+  <parameter name="TMRD" value="3" />
+  <parameter name="TRCD" value="15.0" />
+  <parameter name="TRFC" value="70.0" />
+  <parameter name="TRP" value="15.0" />
+  <parameter name="TWR" value="14.0" />
+  <parameter name="casLatency" value="3" />
+  <parameter name="clockRate" value="100000000" />
+  <parameter name="columnWidth" value="10" />
+  <parameter name="componentName" value="$${FILENAME}_SDRAM" />
+  <parameter name="dataWidth" value="16" />
+  <parameter name="generateSimulationModel" value="false" />
+  <parameter name="initNOPDelay" value="0.0" />
+  <parameter name="initRefreshCommands" value="2" />
+  <parameter name="masteredTristateBridgeSlave" value="0" />
+  <parameter name="model">single_Micron_MT48LC4M32B2_7_chip</parameter>
+  <parameter name="numberOfBanks" value="4" />
+  <parameter name="numberOfChipSelects" value="1" />
+  <parameter name="pinsSharedViaTriState" value="false" />
+  <parameter name="powerUpDelay" value="100.0" />
+  <parameter name="refreshPeriod" value="7.8125" />
+  <parameter name="registerDataIn" value="true" />
+  <parameter name="rowWidth" value="13" />
+ </module>
+ <module name="bt0" kind="altera_avalon_pio" version="24.1" enabled="1">
+  <parameter name="bitClearingEdgeCapReg" value="false" />
+  <parameter name="bitModifyingOutReg" value="false" />
+  <parameter name="captureEdge" value="true" />
+  <parameter name="clockRate" value="50000000" />
+  <parameter name="direction" value="Input" />
+  <parameter name="edgeType" value="FALLING" />
+  <parameter name="generateIRQ" value="true" />
+  <parameter name="irqType" value="EDGE" />
+  <parameter name="resetValue" value="0" />
+  <parameter name="simDoTestBenchWiring" value="false" />
+  <parameter name="simDrivenValue" value="0" />
+  <parameter name="width" value="1" />
+ </module>
+ <module name="clk_100" kind="altera_clock_bridge" version="24.1" enabled="1">
+  <parameter name="DERIVED_CLOCK_RATE" value="0" />
+  <parameter name="EXPLICIT_CLOCK_RATE" value="100000000" />
+  <parameter name="NUM_CLOCK_OUTPUTS" value="1" />
+ </module>
+ <module name="clk_50" kind="altera_clock_bridge" version="24.1" enabled="1">
+  <parameter name="DERIVED_CLOCK_RATE" value="0" />
+  <parameter name="EXPLICIT_CLOCK_RATE" value="50000000" />
+  <parameter name="NUM_CLOCK_OUTPUTS" value="1" />
  </module>
  <module
    name="intel_niosv_g_0"
    kind="intel_niosv_g"
    version="4.0.0"
    enabled="1">
-  <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="1" />
-  <parameter name="AUTO_CLK_RESET_DOMAIN" value="1" />
+  <parameter name="AUTO_CLK_CLOCK_DOMAIN" value="2" />
+  <parameter name="AUTO_CLK_RESET_DOMAIN" value="2" />
   <parameter name="AUTO_DEVICE" value="10M50DAF484C7G" />
   <parameter name="AUTO_DEVICE_SPEEDGRADE" value="7" />
   <parameter name="Blind_Window_Period" value="1000" />
@@ -164,7 +323,7 @@
   <parameter name="basicShadowRegisterFiles" value="0" />
   <parameter name="clockFrequency" value="50000000" />
   <parameter name="dataCacheSize" value="4096" />
-  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='ram_0.s1' start='0x0' end='0x20000' type='altera_avalon_onchip_memory2.s1' /><slave name='intel_niosv_g_0.dm_agent' start='0x20000' end='0x30000' type='intel_niosv_g.dm_agent' /><slave name='intel_niosv_g_0.timer_sw_agent' start='0x30000' end='0x30040' type='intel_niosv_g.timer_sw_agent' /><slave name='led0.s1' start='0x30040' end='0x30050' type='altera_avalon_pio.s1' /><slave name='sysid_qsys_0.control_slave' start='0x30050' end='0x30058' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x30058' end='0x30060' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
+  <parameter name="dataSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='ram_0.s1' start='0x4000000' end='0x4020000' type='altera_avalon_onchip_memory2.s1' /><slave name='intel_niosv_g_0.dm_agent' start='0x4020000' end='0x4030000' type='intel_niosv_g.dm_agent' /><slave name='intel_niosv_g_0.timer_sw_agent' start='0x4030000' end='0x4030040' type='intel_niosv_g.timer_sw_agent' /><slave name='bt0.s1' start='0x4030040' end='0x4030050' type='altera_avalon_pio.s1' /><slave name='led0.s1' start='0x4030050' end='0x4030060' type='altera_avalon_pio.s1' /><slave name='sysid_qsys_0.control_slave' start='0x4030060' end='0x4030068' type='altera_avalon_sysid_qsys.control_slave' /><slave name='jtag_uart_0.avalon_jtag_slave' start='0x4030068' end='0x4030070' type='altera_avalon_jtag_uart.avalon_jtag_slave' /></address-map>]]></parameter>
   <parameter name="deviceFamily" value="MAX 10" />
   <parameter name="disableFsqrtFdiv" value="false" />
   <parameter name="dtcm1Base" value="0" />
@@ -191,7 +350,7 @@
   <parameter name="funct7_u" value="" />
   <parameter name="hartId" value="0" />
   <parameter name="instCacheSize" value="4096" />
-  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='ram_0.s1' start='0x0' end='0x20000' type='altera_avalon_onchip_memory2.s1' /><slave name='intel_niosv_g_0.dm_agent' start='0x20000' end='0x30000' type='intel_niosv_g.dm_agent' /></address-map>]]></parameter>
+  <parameter name="instSlaveMapParam"><![CDATA[<address-map><slave name='SDRAM.s1' start='0x0' end='0x4000000' type='altera_avalon_new_sdram_controller.s1' /><slave name='ram_0.s1' start='0x4000000' end='0x4020000' type='altera_avalon_onchip_memory2.s1' /><slave name='intel_niosv_g_0.dm_agent' start='0x4020000' end='0x4030000' type='intel_niosv_g.dm_agent' /></address-map>]]></parameter>
   <parameter name="itcm1Base" value="0" />
   <parameter name="itcm1InitFile" value="" />
   <parameter name="itcm1Size" value="0" />
@@ -209,7 +368,7 @@
   <parameter name="peripheralRegionBBase" value="0" />
   <parameter name="peripheralRegionBSize" value="0" />
   <parameter name="resetOffset" value="0" />
-  <parameter name="resetSlave" value="ram_0.s1" />
+  <parameter name="resetSlave" value="SDRAM.s1" />
   <parameter name="useResetReq" value="false" />
  </module>
  <module
@@ -247,6 +406,41 @@
   <parameter name="width" value="10" />
  </module>
  <module
+   name="mm_bridge_0"
+   kind="altera_avalon_mm_bridge"
+   version="24.1"
+   enabled="1">
+  <parameter name="ADDRESS_UNITS" value="SYMBOLS" />
+  <parameter name="ADDRESS_WIDTH" value="26" />
+  <parameter name="DATA_WIDTH" value="32" />
+  <parameter name="LINEWRAPBURSTS" value="0" />
+  <parameter name="MAX_BURST_SIZE" value="1" />
+  <parameter name="MAX_PENDING_RESPONSES" value="4" />
+  <parameter name="PIPELINE_COMMAND" value="1" />
+  <parameter name="PIPELINE_RESPONSE" value="1" />
+  <parameter name="SYMBOL_WIDTH" value="8" />
+  <parameter name="SYSINFO_ADDR_WIDTH" value="26" />
+  <parameter name="USE_AUTO_ADDRESS_WIDTH" value="0" />
+  <parameter name="USE_RESPONSE" value="0" />
+ </module>
+ <module
+   name="mm_clock_crossing_bridge_0"
+   kind="altera_avalon_mm_clock_crossing_bridge"
+   version="24.1"
+   enabled="1">
+  <parameter name="ADDRESS_UNITS" value="SYMBOLS" />
+  <parameter name="ADDRESS_WIDTH" value="10" />
+  <parameter name="COMMAND_FIFO_DEPTH" value="64" />
+  <parameter name="DATA_WIDTH" value="32" />
+  <parameter name="MASTER_SYNC_DEPTH" value="2" />
+  <parameter name="MAX_BURST_SIZE" value="1" />
+  <parameter name="RESPONSE_FIFO_DEPTH" value="64" />
+  <parameter name="SLAVE_SYNC_DEPTH" value="2" />
+  <parameter name="SYMBOL_WIDTH" value="8" />
+  <parameter name="SYSINFO_ADDR_WIDTH" value="26" />
+  <parameter name="USE_AUTO_ADDRESS_WIDTH" value="1" />
+ </module>
+ <module
    name="ram_0"
    kind="altera_avalon_onchip_memory2"
    version="24.1"
@@ -279,6 +473,28 @@
   <parameter name="writable" value="true" />
  </module>
  <module
+   name="reset_bridge_100"
+   kind="altera_reset_bridge"
+   version="24.1"
+   enabled="1">
+  <parameter name="ACTIVE_LOW_RESET" value="1" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="100000000" />
+  <parameter name="NUM_RESET_OUTPUTS" value="1" />
+  <parameter name="SYNCHRONOUS_EDGES" value="deassert" />
+  <parameter name="USE_RESET_REQUEST" value="0" />
+ </module>
+ <module
+   name="reset_bridge_50"
+   kind="altera_reset_bridge"
+   version="24.1"
+   enabled="1">
+  <parameter name="ACTIVE_LOW_RESET" value="1" />
+  <parameter name="AUTO_CLK_CLOCK_RATE" value="50000000" />
+  <parameter name="NUM_RESET_OUTPUTS" value="1" />
+  <parameter name="SYNCHRONOUS_EDGES" value="deassert" />
+  <parameter name="USE_RESET_REQUEST" value="0" />
+ </module>
+ <module
    name="sysid_qsys_0"
    kind="altera_avalon_sysid_qsys"
    version="24.1"
@@ -291,7 +507,7 @@
    start="intel_niosv_g_0.data_manager"
    end="jtag_uart_0.avalon_jtag_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00030058" />
+  <parameter name="baseAddress" value="0x04030068" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -300,7 +516,7 @@
    start="intel_niosv_g_0.data_manager"
    end="sysid_qsys_0.control_slave">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00030050" />
+  <parameter name="baseAddress" value="0x04030060" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -309,7 +525,16 @@
    start="intel_niosv_g_0.data_manager"
    end="intel_niosv_g_0.dm_agent">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00020000" />
+  <parameter name="baseAddress" value="0x04020000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="24.1"
+   start="intel_niosv_g_0.data_manager"
+   end="mm_clock_crossing_bridge_0.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -318,7 +543,7 @@
    start="intel_niosv_g_0.data_manager"
    end="ram_0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="baseAddress" value="0x04000000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -327,7 +552,16 @@
    start="intel_niosv_g_0.data_manager"
    end="led0.s1">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00030040" />
+  <parameter name="baseAddress" value="0x04030050" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="24.1"
+   start="intel_niosv_g_0.data_manager"
+   end="bt0.s1">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x04030040" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -336,7 +570,7 @@
    start="intel_niosv_g_0.data_manager"
    end="intel_niosv_g_0.timer_sw_agent">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00030000" />
+  <parameter name="baseAddress" value="0x04030000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -345,7 +579,16 @@
    start="intel_niosv_g_0.instruction_manager"
    end="intel_niosv_g_0.dm_agent">
   <parameter name="arbitrationPriority" value="1" />
-  <parameter name="baseAddress" value="0x00020000" />
+  <parameter name="baseAddress" value="0x04020000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="24.1"
+   start="intel_niosv_g_0.instruction_manager"
+   end="mm_clock_crossing_bridge_0.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
@@ -354,18 +597,67 @@
    start="intel_niosv_g_0.instruction_manager"
    end="ram_0.s1">
   <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x04000000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection
+   kind="avalon"
+   version="24.1"
+   start="mm_clock_crossing_bridge_0.m0"
+   end="mm_bridge_0.s0">
+  <parameter name="arbitrationPriority" value="1" />
+  <parameter name="baseAddress" value="0x0000" />
+  <parameter name="defaultConnection" value="false" />
+ </connection>
+ <connection kind="avalon" version="24.1" start="mm_bridge_0.m0" end="SDRAM.s1">
+  <parameter name="arbitrationPriority" value="1" />
   <parameter name="baseAddress" value="0x0000" />
   <parameter name="defaultConnection" value="false" />
  </connection>
  <connection
    kind="clock"
    version="24.1"
-   start="clk_75.clk"
+   start="clk_50.out_clk"
+   end="reset_bridge_50.clk" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_50.out_clk"
    end="intel_niosv_g_0.clk" />
- <connection kind="clock" version="24.1" start="clk_75.clk" end="jtag_uart_0.clk" />
- <connection kind="clock" version="24.1" start="clk_75.clk" end="sysid_qsys_0.clk" />
- <connection kind="clock" version="24.1" start="clk_75.clk" end="led0.clk" />
- <connection kind="clock" version="24.1" start="clk_75.clk" end="ram_0.clk1" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_50.out_clk"
+   end="jtag_uart_0.clk" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_50.out_clk"
+   end="sysid_qsys_0.clk" />
+ <connection kind="clock" version="24.1" start="clk_50.out_clk" end="led0.clk" />
+ <connection kind="clock" version="24.1" start="clk_50.out_clk" end="bt0.clk" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_100.out_clk"
+   end="reset_bridge_100.clk" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_100.out_clk"
+   end="mm_bridge_0.clk" />
+ <connection kind="clock" version="24.1" start="clk_100.out_clk" end="SDRAM.clk" />
+ <connection kind="clock" version="24.1" start="clk_50.out_clk" end="ram_0.clk1" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_100.out_clk"
+   end="mm_clock_crossing_bridge_0.m0_clk" />
+ <connection
+   kind="clock"
+   version="24.1"
+   start="clk_50.out_clk"
+   end="mm_clock_crossing_bridge_0.s0_clk" />
  <connection
    kind="interrupt"
    version="24.1"
@@ -374,31 +666,72 @@
   <parameter name="irqNumber" value="0" />
  </connection>
  <connection
-   kind="reset"
+   kind="interrupt"
    version="24.1"
-   start="clk_75.clk_reset"
-   end="intel_niosv_g_0.ndm_reset_in" />
+   start="intel_niosv_g_0.platform_irq_rx"
+   end="bt0.irq">
+  <parameter name="irqNumber" value="1" />
+ </connection>
  <connection
    kind="reset"
    version="24.1"
-   start="clk_75.clk_reset"
-   end="intel_niosv_g_0.reset" />
- <connection
-   kind="reset"
-   version="24.1"
-   start="clk_75.clk_reset"
+   start="intel_niosv_g_0.dbg_reset_out"
    end="jtag_uart_0.reset" />
  <connection
    kind="reset"
    version="24.1"
-   start="clk_75.clk_reset"
-   end="sysid_qsys_0.reset" />
- <connection kind="reset" version="24.1" start="clk_75.clk_reset" end="led0.reset" />
+   start="reset_bridge_100.out_reset"
+   end="mm_clock_crossing_bridge_0.m0_reset" />
  <connection
    kind="reset"
    version="24.1"
-   start="clk_75.clk_reset"
+   start="reset_bridge_50.out_reset"
+   end="intel_niosv_g_0.ndm_reset_in" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
+   end="bt0.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
+   end="led0.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
+   end="sysid_qsys_0.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
+   end="jtag_uart_0.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
+   end="intel_niosv_g_0.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_100.out_reset"
+   end="mm_bridge_0.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_100.out_reset"
+   end="SDRAM.reset" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
    end="ram_0.reset1" />
+ <connection
+   kind="reset"
+   version="24.1"
+   start="reset_bridge_50.out_reset"
+   end="mm_clock_crossing_bridge_0.s0_reset" />
  <interconnectRequirement for="$system" name="qsys_mm.clockCrossingAdapter" value="HANDSHAKE" />
  <interconnectRequirement for="$system" name="qsys_mm.enableEccProtection" value="FALSE" />
  <interconnectRequirement for="$system" name="qsys_mm.insertDefaultSlave" value="FALSE" />

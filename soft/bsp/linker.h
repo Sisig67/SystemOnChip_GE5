@@ -4,7 +4,7 @@
  * Machine generated for CPU 'intel_niosv_g_0' in SOPC Builder design 'NIOS_RFS2'
  * SOPC Builder design path: ../../NIOS_RFS2.sopcinfo
  *
- * Generated: Tue Sep 23 10:53:29 CEST 2025
+ * Generated: Tue Sep 30 10:45:18 CEST 2025
  */
 
 /*
@@ -65,10 +65,12 @@
  *
  */
 
-#define RAM_0_REGION_BASE 0x20
-#define RAM_0_REGION_SPAN 131040
+#define RAM_0_REGION_BASE 0x4000000
+#define RAM_0_REGION_SPAN 131072
 #define RESET_REGION_BASE 0x0
 #define RESET_REGION_SPAN 32
+#define SDRAM_REGION_BASE 0x20
+#define SDRAM_REGION_SPAN 67108832
 
 
 /*
@@ -76,11 +78,11 @@
  *
  */
 
-#define ALT_EXCEPTIONS_DEVICE RAM_0
-#define ALT_RESET_DEVICE RAM_0
-#define ALT_RODATA_DEVICE RAM_0
-#define ALT_RWDATA_DEVICE RAM_0
-#define ALT_TEXT_DEVICE RAM_0
+#define ALT_EXCEPTIONS_DEVICE SDRAM
+#define ALT_RESET_DEVICE SDRAM
+#define ALT_RODATA_DEVICE SDRAM
+#define ALT_RWDATA_DEVICE SDRAM
+#define ALT_TEXT_DEVICE SDRAM
 
 
 /*

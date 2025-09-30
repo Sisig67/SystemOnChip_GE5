@@ -3,12 +3,12 @@
  <debug showDebugMenu="0" />
  <systemtable filter="All Interfaces">
   <columns>
-   <connections preferredWidth="127" />
+   <connections preferredWidth="191" />
    <irq preferredWidth="34" />
   </columns>
  </systemtable>
  <library
-   expandedCategories="Library/Interface Protocols/PCI Express,Library/Processors and Peripherals,Library/Interface Protocols,Library/Processors and Peripherals/Peripherals,Library,Library/Interface Protocols/PCI Express/QSYS Example Designs,Project" />
+   expandedCategories="Library/Memory Interfaces and Controllers/SDRAM,Library/Memory Interfaces and Controllers,Library/Memory Interfaces and Controllers/Memory Interfaces with AltMemPHY,Project,Library/University Program/Clock,Library,Library/Memory Interfaces and Controllers/Memory Interfaces with UniPHY,Library/University Program" />
  <window width="1920" height="1032" x="0" y="0" />
  <generation synthesis="VHDL" block_symbol_file="0" />
 </preferences>
