@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/create-hex"
+  "SDRAM.hex"
   "ram_0.hex"
 )
 

@@ -66,16 +66,22 @@ include CMakeFiles/create-hex.dir/compiler_depend.make
 # Include the progress variables for this target.
 include CMakeFiles/create-hex.dir/progress.make
 
+CMakeFiles/create-hex: SDRAM.hex
 CMakeFiles/create-hex: ram_0.hex
 
+SDRAM.hex: app.elf
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Creating SDRAM.hex."
+	elf2hex app.elf -o SDRAM.hex -b 0x00000000 -w 32 -e 0x03FFFFFF -r 4
+
 ram_0.hex: app.elf
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Creating ram_0.hex."
-	elf2hex app.elf -o ram_0.hex -b 0x00000000 -w 32 -e 0x0001FFFF -r 4
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --blue --bold --progress-dir=Z:/FPGA/GoldenTop/soft/app/build/Default/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Creating ram_0.hex."
+	elf2hex app.elf -o ram_0.hex -b 0x04000000 -w 32 -e 0x0401FFFF -r 4
 
 CMakeFiles/create-hex.dir/codegen:
 .PHONY : CMakeFiles/create-hex.dir/codegen
 
 create-hex: CMakeFiles/create-hex
+create-hex: SDRAM.hex
 create-hex: ram_0.hex
 create-hex: CMakeFiles/create-hex.dir/build.make
 .PHONY : create-hex
