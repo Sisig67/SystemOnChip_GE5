@@ -6,7 +6,8 @@
 
 
 #define ms 1000
-#define RH_ADR = 0x80
+#define HDC1000_I2C_ADDR 0x80
+
 
 volatile int key_edge_capture;
 volatile int rh_temp_flag;
@@ -30,12 +31,12 @@ static void init_KEY_IRQ(){
 
 static void rh_temp_int(void * context){
 	volatile int * edge_capture_ptr = (volatile int *) context;
-	* edge_capture_ptr = IORD_ALTERA_AVALON_PIO_EDGE_CAP(BT0_BASE);
-
+	* edge_capture_ptr = IORD_ALTERA_AVALON_PIO_EDGE_CAP(RH_TEMP_DRDY_BASE);
+	printf("irq detected");
 	rh_temp_flag = 1;
 
-	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(BT0_BASE,0);
-	IORD_ALTERA_AVALON_PIO_EDGE_CAP(BT0_BASE);
+	IOWR_ALTERA_AVALON_PIO_EDGE_CAP(RH_TEMP_DRDY_BASE,0);
+	IORD_ALTERA_AVALON_PIO_EDGE_CAP(RH_TEMP_DRDY_BASE);
 }
 
 static void init_RH_TEMP_IRQ(){
@@ -58,23 +59,25 @@ int main()
 
 
 	IOWR_ALTERA_AVALON_PIO_DATA(LED0_BASE, 0x155);
+	uint8_t temp_data[2];
+	// Example 2: Write a single byte to a device
+	uint8_t config_data = 0x0000;
+	if (i2c_write_register(HDC1000_I2C_ADDR, 0x02, &config_data, 2)) {
+		printf("Configuration written successfully\n");
+	} else {
+		printf("Failed to write configuration\n");
+	}
 	while(1){
-		printf("avt_swap\r\n");
 		IOWR_ALTERA_AVALON_PIO_DATA(LED0_BASE, ~IORD_ALTERA_AVALON_PIO_DATA(LED0_BASE));
-		printf("swap\r\n");
-		if (rh_temp_flag){
+
+
+		//if (rh_temp_flag){
 			rh_temp_flag = 0;
+			i2c_read(HDC1000_I2C_ADDR, temp_data, 2);
+				printf("Temperature data: 0x%02X 0x%02X\n",
+					   temp_data[0], temp_data[1]);
+		//}
 
-
-			    // Example 1: Read 3 bytes from HDC1000 temperature register
-			    uint8_t temp_data[3];
-			    if (i2c_read_3bytes(HDC1000_I2C_ADDR, 0x00, temp_data)) {
-			        printf("Temperature data: 0x%02X 0x%02X 0x%02X\n",
-			               temp_data[0], temp_data[1], temp_data[2]);
-			    } else {
-			        printf("Failed to read temperature data\n");
-			    }
-		}
 		usleep(1000*ms);
 
 	}
