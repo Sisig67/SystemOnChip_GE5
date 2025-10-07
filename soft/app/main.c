@@ -28,9 +28,10 @@ static void init_KEY_IRQ(){
 
 int main()
 {
+	usleep(100*ms);
 	printf("hello_world");
 
-	usleep(100*ms);
+
 	init_KEY_IRQ();
 	IOWR_ALTERA_AVALON_PIO_DATA(LED0_BASE, 0x155);
 	while(1){

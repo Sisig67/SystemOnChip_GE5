@@ -92,7 +92,12 @@ architecture struct of DE10_LITE_Golden_Top is
 			sdram_dqm                         : out   std_logic_vector(1 downto 0);                     -- dqm
 			sdram_ras_n                       : out   std_logic;                                        -- ras_n
 			sdram_we_n                        : out   std_logic;                                        -- we_n
-			bt0_export                        : in    std_logic                     := 'X'              -- export
+			bt0_export                        : in    std_logic                     := 'X';             -- export
+			
+			i2c_scl_pad_io                    : inout std_logic                     := 'X';             -- scl_pad_io
+			i2c_sda_pad_io                    : inout std_logic                     := 'X';              -- sda_pad_io
+			
+			rh_temp_drdy_export               : in    std_logic                     := 'X'              -- export
 		);
 	end component NIOS_RFS2;
 
@@ -129,9 +134,13 @@ begin
 			sdram_ras_n                       => DRAM_RAS_N,                       --                          .ras_n
 			sdram_we_n                        => DRAM_WE_N,                        --                          .we_n
 			
+			i2c_scl_pad_io                    => GPIO(3),                    --                       i2c.scl_pad_io
+			i2c_sda_pad_io                    => GPIO(5),                     --                          .sda_pad_io
 			
 			bt0_export                        => KEY(1),                         	  --                       bt0.export
-			led_nios_export => LEDR  -- led_nios.export
+			led_nios_export => LEDR,  -- led_nios.export,
+			
+			rh_temp_drdy_export               => GPIO(4)                --              rh_temp_drdy.export
 		);
 		
 	U1 : component pll2	
@@ -145,7 +154,8 @@ begin
 		DRAM_CLK <= clk_100_sdram;
 		
 		
-		GPIO <= (others=>'Z');
+		GPIO(2 downto 0) <= (others=>'Z');
+		GPIO(35 downto 6) <= (others=>'Z');
 		
 		HEX0 <= (others => '1');
 		HEX1 <= (others => '1');

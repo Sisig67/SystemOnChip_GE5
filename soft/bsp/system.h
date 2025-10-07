@@ -4,7 +4,7 @@
  * Machine generated for CPU 'intel_niosv_g_0' in SOPC Builder design 'NIOS_RFS2'
  * SOPC Builder design path: ../../NIOS_RFS2.sopcinfo
  *
- * Generated: Tue Sep 30 10:45:18 CEST 2025
+ * Generated: Tue Oct 07 09:19:50 CEST 2025
  */
 
 /*
@@ -122,6 +122,7 @@
 #define __ALTERA_AVALON_ONCHIP_MEMORY2
 #define __ALTERA_AVALON_PIO
 #define __ALTERA_AVALON_SYSID_QSYS
+#define __I2C_OPENCORES
 #define __INTEL_NIOSV_G
 
 
@@ -180,19 +181,19 @@
 #define ALT_NUM_INTERNAL_INTERRUPT_CONTROLLERS 1
 #define ALT_NUM_INTERRUPT_CONTROLLERS 1
 #define ALT_STDERR "/dev/jtag_uart_0"
-#define ALT_STDERR_BASE 0x4030068
+#define ALT_STDERR_BASE 0x4030098
 #define ALT_STDERR_DEV jtag_uart_0
 #define ALT_STDERR_IS_JTAG_UART
 #define ALT_STDERR_PRESENT
 #define ALT_STDERR_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDIN "/dev/jtag_uart_0"
-#define ALT_STDIN_BASE 0x4030068
+#define ALT_STDIN_BASE 0x4030098
 #define ALT_STDIN_DEV jtag_uart_0
 #define ALT_STDIN_IS_JTAG_UART
 #define ALT_STDIN_PRESENT
 #define ALT_STDIN_TYPE "altera_avalon_jtag_uart"
 #define ALT_STDOUT "/dev/jtag_uart_0"
-#define ALT_STDOUT_BASE 0x4030068
+#define ALT_STDOUT_BASE 0x4030098
 #define ALT_STDOUT_DEV jtag_uart_0
 #define ALT_STDOUT_IS_JTAG_UART
 #define ALT_STDOUT_PRESENT
@@ -210,7 +211,7 @@
  */
 
 #define ALT_MODULE_CLASS_bt0 altera_avalon_pio
-#define BT0_BASE 0x4030040
+#define BT0_BASE 0x4030070
 #define BT0_BIT_CLEARING_EDGE_REGISTER 0
 #define BT0_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define BT0_CAPTURE 1
@@ -241,6 +242,20 @@
 #define ALT_TIMESTAMP_CLK INTEL_NIOSV_G_0
 #define INTEL_FPGA_DFL_START_ADDRESS 0xffffffffffffffff
 #define INTEL_FPGA_USE_DFL_WALKER 0
+
+
+/*
+ * i2c_opencores_0 configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_i2c_opencores_0 i2c_opencores
+#define I2C_OPENCORES_0_BASE 0x4030040
+#define I2C_OPENCORES_0_IRQ 2
+#define I2C_OPENCORES_0_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define I2C_OPENCORES_0_NAME "/dev/i2c_opencores_0"
+#define I2C_OPENCORES_0_SPAN 32
+#define I2C_OPENCORES_0_TYPE "i2c_opencores"
 
 
 /*
@@ -327,7 +342,7 @@
  */
 
 #define ALT_MODULE_CLASS_jtag_uart_0 altera_avalon_jtag_uart
-#define JTAG_UART_0_BASE 0x4030068
+#define JTAG_UART_0_BASE 0x4030098
 #define JTAG_UART_0_IRQ 0
 #define JTAG_UART_0_IRQ_INTERRUPT_CONTROLLER_ID 0
 #define JTAG_UART_0_NAME "/dev/jtag_uart_0"
@@ -345,7 +360,7 @@
  */
 
 #define ALT_MODULE_CLASS_led0 altera_avalon_pio
-#define LED0_BASE 0x4030050
+#define LED0_BASE 0x4030080
 #define LED0_BIT_CLEARING_EDGE_REGISTER 0
 #define LED0_BIT_MODIFYING_OUTPUT_REGISTER 0
 #define LED0_CAPTURE 0
@@ -396,18 +411,45 @@
 
 
 /*
+ * rh_temp_drdy configuration
+ *
+ */
+
+#define ALT_MODULE_CLASS_rh_temp_drdy altera_avalon_pio
+#define RH_TEMP_DRDY_BASE 0x4030060
+#define RH_TEMP_DRDY_BIT_CLEARING_EDGE_REGISTER 0
+#define RH_TEMP_DRDY_BIT_MODIFYING_OUTPUT_REGISTER 0
+#define RH_TEMP_DRDY_CAPTURE 1
+#define RH_TEMP_DRDY_DATA_WIDTH 1
+#define RH_TEMP_DRDY_DO_TEST_BENCH_WIRING 0
+#define RH_TEMP_DRDY_DRIVEN_SIM_VALUE 0
+#define RH_TEMP_DRDY_EDGE_TYPE "FALLING"
+#define RH_TEMP_DRDY_FREQ 50000000
+#define RH_TEMP_DRDY_HAS_IN 1
+#define RH_TEMP_DRDY_HAS_OUT 0
+#define RH_TEMP_DRDY_HAS_TRI 0
+#define RH_TEMP_DRDY_IRQ 3
+#define RH_TEMP_DRDY_IRQ_INTERRUPT_CONTROLLER_ID 0
+#define RH_TEMP_DRDY_IRQ_TYPE "EDGE"
+#define RH_TEMP_DRDY_NAME "/dev/rh_temp_drdy"
+#define RH_TEMP_DRDY_RESET_VALUE 0
+#define RH_TEMP_DRDY_SPAN 16
+#define RH_TEMP_DRDY_TYPE "altera_avalon_pio"
+
+
+/*
  * sysid_qsys_0 configuration
  *
  */
 
 #define ALT_MODULE_CLASS_sysid_qsys_0 altera_avalon_sysid_qsys
-#define SYSID_QSYS_0_BASE 0x4030060
+#define SYSID_QSYS_0_BASE 0x4030090
 #define SYSID_QSYS_0_ID 0
 #define SYSID_QSYS_0_IRQ -1
 #define SYSID_QSYS_0_IRQ_INTERRUPT_CONTROLLER_ID -1
 #define SYSID_QSYS_0_NAME "/dev/sysid_qsys_0"
 #define SYSID_QSYS_0_SPAN 8
-#define SYSID_QSYS_0_TIMESTAMP 1759218772
+#define SYSID_QSYS_0_TIMESTAMP 1759820903
 #define SYSID_QSYS_0_TYPE "altera_avalon_sysid_qsys"
 
 #endif /* __SYSTEM_H_ */

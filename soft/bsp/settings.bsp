@@ -2,12 +2,12 @@
 <sch:Settings xmlns:sch="http://www.altera.com/embeddedsw/bsp/schema">
         <BspType>hal2</BspType>
         <BspVersion>default</BspVersion>
-        <BspGeneratedTimeStamp>30 sept. 2025 10:45:14</BspGeneratedTimeStamp>
-        <BspGeneratedUnixTimeStamp>1759221914673</BspGeneratedUnixTimeStamp>
+        <BspGeneratedTimeStamp>7 oct. 2025 09:19:46</BspGeneratedTimeStamp>
+        <BspGeneratedUnixTimeStamp>1759821586767</BspGeneratedUnixTimeStamp>
         <BspGeneratedLocation>Z:\FPGA\GoldenTop\soft\bsp</BspGeneratedLocation>
         <BspSettingsFile>Z:\FPGA\GoldenTop\soft\bsp\settings.bsp</BspSettingsFile>
         <SopcDesignFile>..\..\NIOS_RFS2.sopcinfo</SopcDesignFile>
-        <SystemFileHash>fedf61df744c9be75df0addc99e96567641e99ab422114ada7a547439ec95</SystemFileHash>
+        <SystemFileHash>a079ccba44c851984a87f56ca4d2f60d6407d6452ab1eb81dc66e17f87f9ff</SystemFileHash>
         <JdiFile>default</JdiFile>
         <Cpu>intel_niosv_g_0</Cpu>
         <SchemaVersion>1.9</SchemaVersion>
@@ -624,26 +624,38 @@
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
+                <slaveDescriptor>i2c_opencores_0</slaveDescriptor>
+                <addressRange>0x04030040 - 0x0403005F</addressRange>
+                <addressSpan>32</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
+                <slaveDescriptor>rh_temp_drdy</slaveDescriptor>
+                <addressRange>0x04030060 - 0x0403006F</addressRange>
+                <addressSpan>16</addressSpan>
+                <attributes/>
+        </MemoryMap>
+        <MemoryMap>
                 <slaveDescriptor>bt0</slaveDescriptor>
-                <addressRange>0x04030040 - 0x0403004F</addressRange>
+                <addressRange>0x04030070 - 0x0403007F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>led0</slaveDescriptor>
-                <addressRange>0x04030050 - 0x0403005F</addressRange>
+                <addressRange>0x04030080 - 0x0403008F</addressRange>
                 <addressSpan>16</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>sysid_qsys_0</slaveDescriptor>
-                <addressRange>0x04030060 - 0x04030067</addressRange>
+                <addressRange>0x04030090 - 0x04030097</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes/>
         </MemoryMap>
         <MemoryMap>
                 <slaveDescriptor>jtag_uart_0</slaveDescriptor>
-                <addressRange>0x04030068 - 0x0403006F</addressRange>
+                <addressRange>0x04030098 - 0x0403009F</addressRange>
                 <addressSpan>8</addressSpan>
                 <attributes>printable</attributes>
         </MemoryMap>

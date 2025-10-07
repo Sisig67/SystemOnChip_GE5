@@ -49,21 +49,21 @@ module NIOS_RFS2_mm_interconnect_0_router_007_default_decode
                DEFAULT_RD_CHANNEL = 1,
                DEFAULT_DESTID = 0 
    )
-  (output [109 - 107 : 0] default_destination_id,
-   output [5-1 : 0] default_wr_channel,
-   output [5-1 : 0] default_rd_channel,
-   output [5-1 : 0] default_src_channel
+  (output [111 - 108 : 0] default_destination_id,
+   output [10-1 : 0] default_wr_channel,
+   output [10-1 : 0] default_rd_channel,
+   output [10-1 : 0] default_src_channel
   );
 
   assign default_destination_id = 
-    DEFAULT_DESTID[109 - 107 : 0];
+    DEFAULT_DESTID[111 - 108 : 0];
 
   generate
     if (DEFAULT_CHANNEL == -1) begin : no_default_channel_assignment
       assign default_src_channel = '0;
     end
     else begin : default_channel_assignment
-      assign default_src_channel = 5'b1 << DEFAULT_CHANNEL;
+      assign default_src_channel = 10'b1 << DEFAULT_CHANNEL;
     end
   endgenerate
 
@@ -73,8 +73,8 @@ module NIOS_RFS2_mm_interconnect_0_router_007_default_decode
       assign default_rd_channel = '0;
     end
     else begin : default_rw_channel_assignment
-      assign default_wr_channel = 5'b1 << DEFAULT_WR_CHANNEL;
-      assign default_rd_channel = 5'b1 << DEFAULT_RD_CHANNEL;
+      assign default_wr_channel = 10'b1 << DEFAULT_WR_CHANNEL;
+      assign default_rd_channel = 10'b1 << DEFAULT_RD_CHANNEL;
     end
   endgenerate
 
@@ -93,7 +93,7 @@ module NIOS_RFS2_mm_interconnect_0_router_007
     // Command Sink (Input)
     // -------------------
     input                       sink_valid,
-    input  [123-1 : 0]    sink_data,
+    input  [125-1 : 0]    sink_data,
     input                       sink_startofpacket,
     input                       sink_endofpacket,
     output                      sink_ready,
@@ -102,8 +102,8 @@ module NIOS_RFS2_mm_interconnect_0_router_007
     // Command Source (Output)
     // -------------------
     output                          src_valid,
-    output reg [123-1    : 0] src_data,
-    output reg [5-1 : 0] src_channel,
+    output reg [125-1    : 0] src_data,
+    output reg [10-1 : 0] src_channel,
     output                          src_startofpacket,
     output                          src_endofpacket,
     input                           src_ready
@@ -114,12 +114,12 @@ module NIOS_RFS2_mm_interconnect_0_router_007
     // -------------------------------------------------------
     localparam PKT_ADDR_H = 67;
     localparam PKT_ADDR_L = 36;
-    localparam PKT_DEST_ID_H = 109;
-    localparam PKT_DEST_ID_L = 107;
-    localparam PKT_PROTECTION_H = 113;
-    localparam PKT_PROTECTION_L = 111;
-    localparam ST_DATA_W = 123;
-    localparam ST_CHANNEL_W = 5;
+    localparam PKT_DEST_ID_H = 111;
+    localparam PKT_DEST_ID_L = 108;
+    localparam PKT_PROTECTION_H = 115;
+    localparam PKT_PROTECTION_L = 113;
+    localparam ST_DATA_W = 125;
+    localparam ST_CHANNEL_W = 10;
     localparam DECODER_TYPE = 1;
 
     localparam PKT_TRANS_WRITE = 70;
@@ -158,8 +158,8 @@ module NIOS_RFS2_mm_interconnect_0_router_007
     assign src_valid         = sink_valid;
     assign src_startofpacket = sink_startofpacket;
     assign src_endofpacket   = sink_endofpacket;
-    wire [5-1 : 0] default_rd_channel;
-    wire [5-1 : 0] default_wr_channel;
+    wire [10-1 : 0] default_rd_channel;
+    wire [10-1 : 0] default_wr_channel;
 
 
 
@@ -193,19 +193,19 @@ module NIOS_RFS2_mm_interconnect_0_router_007
 
 
         if (destid == 0  && write_transaction) begin
-            src_channel = 5'b0001;
+            src_channel = 10'b0001;
         end
 
         if (destid == 0  && read_transaction) begin
-            src_channel = 5'b0010;
+            src_channel = 10'b0010;
         end
 
         if (destid == 1  && write_transaction) begin
-            src_channel = 5'b0100;
+            src_channel = 10'b0100;
         end
 
         if (destid == 1  && read_transaction) begin
-            src_channel = 5'b1000;
+            src_channel = 10'b1000;
         end
 
 
