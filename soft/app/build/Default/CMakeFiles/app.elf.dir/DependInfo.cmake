@@ -8,6 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "Z:/FPGA/GoldenTop/soft/app/i2c_opencores_niosv.c" "CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj" "gcc" "CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj.d"
   "Z:/FPGA/GoldenTop/soft/app/main.c" "CMakeFiles/app.elf.dir/main.c.obj" "gcc" "CMakeFiles/app.elf.dir/main.c.obj.d"
   )
 

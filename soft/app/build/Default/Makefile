@@ -181,6 +181,30 @@ hal2_bsp/fast:
 	$(MAKE) $(MAKESILENT) -f bsp/CMakeFiles/hal2_bsp.dir/build.make bsp/CMakeFiles/hal2_bsp.dir/build
 .PHONY : hal2_bsp/fast
 
+i2c_opencores_niosv.obj: i2c_opencores_niosv.c.obj
+.PHONY : i2c_opencores_niosv.obj
+
+# target to build an object file
+i2c_opencores_niosv.c.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.elf.dir/build.make CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj
+.PHONY : i2c_opencores_niosv.c.obj
+
+i2c_opencores_niosv.i: i2c_opencores_niosv.c.i
+.PHONY : i2c_opencores_niosv.i
+
+# target to preprocess a source file
+i2c_opencores_niosv.c.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.elf.dir/build.make CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.i
+.PHONY : i2c_opencores_niosv.c.i
+
+i2c_opencores_niosv.s: i2c_opencores_niosv.c.s
+.PHONY : i2c_opencores_niosv.s
+
+# target to generate assembly for a file
+i2c_opencores_niosv.c.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/app.elf.dir/build.make CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.s
+.PHONY : i2c_opencores_niosv.c.s
+
 main.obj: main.c.obj
 .PHONY : main.obj
 
@@ -218,6 +242,9 @@ help:
 	@echo "... niosv-stack-report"
 	@echo "... app.elf"
 	@echo "... hal2_bsp"
+	@echo "... i2c_opencores_niosv.obj"
+	@echo "... i2c_opencores_niosv.i"
+	@echo "... i2c_opencores_niosv.s"
 	@echo "... main.obj"
 	@echo "... main.i"
 	@echo "... main.s"

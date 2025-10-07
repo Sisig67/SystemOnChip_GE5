@@ -6,6 +6,12 @@
   "output": "CMakeFiles/app.elf.dir/main.c.obj"
 },
 {
+  "directory": "Z:/FPGA/GoldenTop/soft/app/build/Default",
+  "command": "C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/bin/riscv32-unknown-elf-gcc.exe -DALT_LOG_FLAGS=0 -D__hal__ -IZ:/FPGA/GoldenTop/soft/bsp/. -IZ:/FPGA/GoldenTop/soft/bsp/HAL/inc -IZ:/FPGA/GoldenTop/soft/bsp/drivers/inc -g -DALT_SINGLE_THREADED -Wall -Wformat-security -Wformat -fstack-protector-strong -march=rv32im_zicbom -mabi=ilp32 -o CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj -c Z:/FPGA/GoldenTop/soft/app/i2c_opencores_niosv.c",
+  "file": "Z:/FPGA/GoldenTop/soft/app/i2c_opencores_niosv.c",
+  "output": "CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj"
+},
+{
   "directory": "Z:/FPGA/GoldenTop/soft/app/build/Default/bsp",
   "command": "C:/altera/24.1std/riscfree/toolchain/riscv32-unknown-elf/bin/riscv32-unknown-elf-gcc.exe -DALT_LOG_FLAGS=0 -D__hal__ -IZ:/FPGA/GoldenTop/soft/bsp/. -IZ:/FPGA/GoldenTop/soft/bsp/HAL/inc -IZ:/FPGA/GoldenTop/soft/bsp/drivers/inc -g -Wa,-gdwarf2 -DALT_SINGLE_THREADED -Wall -Wformat-security -Wformat -fstack-protector-strong -march=rv32im_zicbom -mabi=ilp32 -o CMakeFiles/hal2_bsp.dir/HAL/src/alt_ecc_exception_entry.S.obj -c Z:/FPGA/GoldenTop/soft/bsp/HAL/src/alt_ecc_exception_entry.S",
   "file": "Z:/FPGA/GoldenTop/soft/bsp/HAL/src/alt_ecc_exception_entry.S",

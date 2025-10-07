@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj"
+  "CMakeFiles/app.elf.dir/i2c_opencores_niosv.c.obj.d"
   "CMakeFiles/app.elf.dir/main.c.obj"
   "CMakeFiles/app.elf.dir/main.c.obj.d"
   "app.elf"

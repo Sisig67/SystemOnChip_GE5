@@ -15,6 +15,7 @@ add_executable(app.elf)
 target_sources(app.elf
     PRIVATE
         main.c
+        i2c_opencores_niosv.c
 )
 
 target_include_directories(app.elf
